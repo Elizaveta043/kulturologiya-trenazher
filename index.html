@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Культурология">
+<meta name="theme-color" content="#f5f3ee">
+<title>Культурология: тренажёр</title>
+<style>
+:root{
+  --bg:#f5f3ee; --surface:#ffffff; --surface-2:#eeebe4; --text:#1d1b18; --muted:#6a655c; --border:#ddd8cd;
+  --accent:#2c5a86; --on-accent:#ffffff; --accent-soft:#e2ebf4;
+  --ok:#2c7a4c; --on-ok:#ffffff; --ok-soft:#e0f1e6;
+  --bad:#b0402c; --on-bad:#ffffff; --bad-soft:#f7e2dc;
+  --warn:#8d6200; --warn-soft:#f8eccc;
+  --shadow:0 1px 2px rgba(30,25,15,.05),0 6px 20px rgba(30,25,15,.05);
+  --radius:14px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141618; --surface:#1d2023; --surface-2:#272b2f; --text:#ebe8e2; --muted:#a29d94; --border:#363b40;
+    --accent:#86b6e4; --on-accent:#0e1822; --accent-soft:#1e3044;
+    --ok:#6dc795; --on-ok:#0d2016; --ok-soft:#1b3326;
+    --bad:#ee8c78; --on-bad:#2a120c; --bad-soft:#3b221c;
+    --warn:#e5bb55; --warn-soft:#362d14;
+    --shadow:none; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141618; --surface:#1d2023; --surface-2:#272b2f; --text:#ebe8e2; --muted:#a29d94; --border:#363b40;
+  --accent:#86b6e4; --on-accent:#0e1822; --accent-soft:#1e3044;
+  --ok:#6dc795; --on-ok:#0d2016; --ok-soft:#1b3326;
+  --bad:#ee8c78; --on-bad:#2a120c; --bad-soft:#3b221c;
+  --warn:#e5bb55; --warn-soft:#362d14;
+  --shadow:none; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:780px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--border)}
+header.top .bar{display:flex;align-items:center;justify-content:space-between;height:56px;gap:12px}
+.brand{font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:none;border:0;padding:0;cursor:pointer;font-size:16px}
+.brand span{font-weight:500;color:var(--muted);margin-left:6px}
+.iconbtn{border:1px solid var(--border);background:var(--surface);border-radius:10px;height:36px;min-width:36px;padding:0 10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:14px}
+.iconbtn:hover{border-color:var(--accent)}
+main{padding:22px 0 64px}
+h1{font-size:28px;line-height:1.2;margin:4px 0 6px;letter-spacing:-.02em}
+h2{font-size:18px;margin:0 0 12px;letter-spacing:-.01em}
+.lead{color:var(--muted);margin:0 0 18px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.stack>*+*{margin-top:14px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px}
+.stat b{display:block;font-size:22px;line-height:1.2;font-variant-numeric:tabular-nums}
+.stat small{color:var(--muted);font-size:12.5px}
+@media (max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field>label,.label{font-size:13px;color:var(--muted);font-weight:600}
+.settings{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:620px){.settings{grid-template-columns:1fr}}
+.seg{display:inline-flex;flex-wrap:wrap;background:var(--surface-2);border-radius:10px;padding:3px;gap:2px;max-width:100%}
+.seg button{border:0;background:transparent;padding:7px 12px;border-radius:8px;font-size:14px;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+select{appearance:none;-webkit-appearance:none;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23888' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 12px center;border:1px solid var(--border);border-radius:10px;padding:8px 34px 8px 12px;font-size:14px;width:100%;max-width:100%}
+input[type=search]{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:15px}
+select:focus,input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.modes{grid-template-columns:1fr}}
+.mode{display:flex;flex-direction:column;gap:4px;text-align:left;padding:16px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);cursor:pointer;box-shadow:var(--shadow);transition:border-color .12s,transform .12s}
+.mode:hover{border-color:var(--accent);transform:translateY(-1px)}
+.mode b{font-size:16px}
+.mode small{color:var(--muted);font-size:13.5px;line-height:1.4}
+.mode.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.mode.primary small{color:inherit;opacity:.85}
+.mode.warn{border-color:var(--warn);background:var(--warn-soft)}
+.mode[disabled]{opacity:.5;cursor:not-allowed;transform:none}
+.note{font-size:13.5px;color:var(--muted);background:var(--surface-2);border-radius:12px;padding:12px 14px}
+.note b{color:var(--text)}
+.progress{height:6px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.progress>i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .25s}
+.qhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;font-size:14px;color:var(--muted)}
+.qhead b{color:var(--text);font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 10px}
+.chip{display:inline-flex;align-items:center;font-size:12.5px;line-height:1.3;padding:3px 9px;border-radius:99px;background:var(--surface-2);color:var(--muted)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.qtext{font-size:20px;line-height:1.45;font-weight:600;margin:0 0 16px;letter-spacing:-.005em}
+@media (max-width:560px){.qtext{font-size:18px}}
+.options{display:flex;flex-direction:column;gap:10px}
+.option{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:13px 14px;border:1.5px solid var(--border);background:var(--surface);border-radius:12px;cursor:pointer;transition:border-color .12s,background .12s;line-height:1.45}
+.option:hover:not(:disabled){border-color:var(--accent)}
+.option .letter{flex:none;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--surface-2);font-weight:700;font-size:14px;margin-top:-2px}
+.option .t{padding-top:1px}
+.option.is-chosen{border-color:var(--accent);background:var(--accent-soft)}
+.option.is-chosen .letter{background:var(--accent);color:var(--on-accent)}
+.option.is-correct{border-color:var(--ok);background:var(--ok-soft)}
+.option.is-correct .letter{background:var(--ok);color:var(--on-ok)}
+.option.is-wrong{border-color:var(--bad);background:var(--bad-soft)}
+.option.is-wrong .letter{background:var(--bad);color:var(--on-bad)}
+.option.dim{opacity:.55}
+.option:disabled{cursor:default}
+.feedback{border-radius:12px;padding:13px 15px;margin-top:14px;font-size:15px}
+.feedback.ok{background:var(--ok-soft)}
+.feedback.bad{background:var(--bad-soft)}
+.feedback .h{font-weight:700;margin-bottom:2px}
+.feedback.ok .h{color:var(--ok)}
+.feedback.bad .h{color:var(--bad)}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:18px}
+.actions .spacer{flex:1}
+.btn{border:1px solid var(--accent);background:var(--accent);color:var(--on-accent);border-radius:11px;padding:10px 18px;font-weight:600;cursor:pointer;font-size:15px}
+.btn:hover{filter:brightness(1.06)}
+.btn.ghost{background:var(--surface);color:var(--text);border-color:var(--border)}
+.btn.ghost:hover{border-color:var(--accent);filter:none}
+.btn.danger{background:var(--surface);color:var(--bad);border-color:var(--border)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.kbd{display:inline-block;border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;padding:0 5px;font-size:12px;line-height:18px;color:var(--muted);background:var(--surface)}
+.hint{font-size:12.5px;color:var(--muted);margin-top:14px}
+.navgrid{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.navgrid button{width:34px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:13px;font-variant-numeric:tabular-nums}
+.navgrid button.done{background:var(--accent-soft);border-color:var(--accent)}
+.navgrid button.cur{outline:2px solid var(--accent);outline-offset:1px;font-weight:700}
+.score{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.ring{--p:0;width:104px;height:104px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--p)*1%),var(--surface-2) 0);display:grid;place-items:center;flex:none}
+.ring>div{width:82px;height:82px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.grade{font-size:34px;font-weight:800;line-height:1;letter-spacing:-.02em}
+.dist{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.dist span{font-size:13px;background:var(--surface-2);border-radius:8px;padding:3px 9px;font-variant-numeric:tabular-nums}
+.review{list-style:none;margin:0;padding:0}
+.review li{padding:14px 0;border-top:1px solid var(--border)}
+.review li:first-child{border-top:0}
+.review .q{font-weight:600;margin-bottom:6px}
+.ans{display:flex;gap:8px;align-items:baseline;font-size:14.5px;margin-top:3px}
+.ans .tag{flex:none;font-size:11.5px;font-weight:700;border-radius:6px;padding:1px 6px}
+.ans .tag.ok{background:var(--ok-soft);color:var(--ok)}
+.ans .tag.bad{background:var(--bad-soft);color:var(--bad)}
+.flash{min-height:300px;display:flex;flex-direction:column}
+.flash .qtext{flex:1}
+.flash .answer{border-top:1px dashed var(--border);padding-top:14px;margin-top:6px}
+.flash .answer .a{font-size:18px;font-weight:700;color:var(--ok)}
+.list .item{padding:14px 0;border-top:1px solid var(--border)}
+.list .item:first-child{border-top:0}
+.list .num{font-size:12.5px;color:var(--muted);font-weight:600}
+.list .q{font-weight:600;margin:2px 0 4px}
+.list .a{color:var(--ok);font-weight:600}
+.list .e{font-size:14px;color:var(--muted);margin-top:4px}
+mark{background:var(--warn-soft);color:inherit;border-radius:3px;padding:0 1px}
+.empty{padding:28px 0;text-align:center;color:var(--muted)}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px;padding:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:420px){.card{padding:14px}.option{padding:12px}.actions .btn{flex-grow:1}.brand span{display:none}}
+@media (pointer:coarse){
+  button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .option{min-height:56px;padding:15px}
+  .btn{min-height:46px}
+  .iconbtn{min-height:42px;min-width:42px}
+  .navgrid button{min-height:40px;min-width:40px}
+}
+@media(max-width:480px){
+  .wrap{padding-left:14px;padding-right:14px}
+  .card{padding:15px}
+  main{padding-top:16px;padding-bottom:calc(48px + env(safe-area-inset-bottom))}
+  .actions .btn{flex:1 1 auto}
+  .brand{font-size:14px}
+  .qtext{overflow-wrap:anywhere}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap bar">
+    <button class="brand" data-act="home" title="В меню">Культурология<span>· тренажёр</span></button>
+    <div class="row" style="gap:8px;flex-wrap:nowrap">
+      <span id="timer" class="muted small" aria-live="off"></span>
+      <button class="iconbtn" id="themeBtn" data-act="theme" aria-label="Сменить тему">◐</button>
+    </div>
+  </div>
+</header>
+<main class="wrap" id="app" aria-live="polite"></main>
+
+<script type="application/json" id="qdata">{"bank":[{"n":"1","topic":0,"q":"Культурология как наука сложилась","correct":"В последней трети XIX в.","wrong":["В начале XV в.","В середине XVII в.","В начале XVIII в."],"last":"","note":"В оригинале «Културология» — исправлено на «Культурология».","explain":"Основы культурологии как науки заложены в последней трети XIX в. трудами Э. Тайлора («Первобытная культура», 1871) и других учёных; сам термин «культурология» в XX в. популяризировал Л. Уайт.","disputed":false},{"n":"2","topic":1,"q":"Культуру, как целостную систему, обычно принято делить на формы:","correct":"Материальную и духовную","wrong":["Религию, искусство, образование","Биологическую и духовную","Биологическую и физическую"],"last":"","note":"","explain":"Традиционно культуру делят на материальную (орудия, жилище, техника) и духовную (знания, искусство, религия, мораль).","disputed":false},{"n":"3","topic":1,"q":"Сфера материально-производственной деятельности человека и ее результаты – это культура:","correct":"Материальная","wrong":["Духовная","Техническая","Экологическая"],"last":"","note":"","explain":"Материальная культура охватывает производственную деятельность и её результаты: орудия труда, технику, жилище, одежду, предметы быта.","disputed":false},{"n":"4","topic":1,"q":"Какая из перечисленных функций культуры является основной, формирующей все остальные?","correct":"Гуманистическая, человеко-творческая","wrong":["Информативно-трансляционная","Ценностно-ориентирующая","Нормативно-ориентирующая"],"last":"","note":"","explain":"Человекотворческая (гуманистическая) функция главная: культура формирует и развивает самого человека, а информационная, ценностная и нормативная функции производны от неё.","disputed":false},{"n":"5","topic":0,"q":"Идея о том, что цивилизация и культура – одно и то же, они синонимы, принадлежит","correct":"Гердер, Тайлор, Тойнби","wrong":["Шпенглер, Руссо, Фурье","Морган","Данилевский"],"last":"","note":"","explain":"Гердер и Тайлор употребляли «культуру» и «цивилизацию» как синонимы (у Тайлора: «культура, или цивилизация»), Тойнби называл цивилизациями крупные культурные целостности. Шпенглер, наоборот, их противопоставлял.","disputed":false},{"n":"6","topic":0,"q":"Что первоначально подразумевалось под словом «культура»","correct":"Способы обработки земли","wrong":["Правила поведения в обществе","Интеллектуальные достижения человечества","Создание искусственной природы"],"last":"","note":"","explain":"Латинское cultura означает «возделывание, обработка земли» (Катон, «О земледелии»); переносный смысл «возделывание души» появился позже, у Цицерона.","disputed":false},{"n":"7","topic":4,"q":"Поклонение животным, растениям или явлениям природы как родоначальнику и покровителю рода – это:","correct":"Тотемизм","wrong":["Фетишизм","Пантеизм","Анимизм"],"last":"","note":"","explain":"Тотемизм — вера в кровное родство рода с тотемом (животным, растением, явлением), который считается его предком и покровителем.","disputed":false},{"n":"8","topic":4,"q":"Вера в способность человека особым образом воздействовать на животных, людей и явления природы – это:","correct":"Магия","wrong":["Фетишизм","Пантеизм","Анимизм"],"last":"","note":"","explain":"Магия (колдовство) — вера в то, что с помощью обрядов, заклинаний и ритуальных действий можно влиять на людей, животных и природу.","disputed":false},{"n":"9","topic":0,"q":"Главная особенность неолита","correct":"переход к производящему хозяйству","wrong":["получение огня искусственным способом","формирование материнского рода","изобретение горшков"],"last":"","note":"","explain":"«Неолитическая революция» — переход от присваивающего хозяйства (охота, собирательство) к производящему (земледелие, скотоводство).","disputed":false},{"n":"10","topic":4,"q":"Что такое мифология?","correct":"Фантастическое отражение действительности в первобытном сознании, воплощенное в устном народном творчестве.","wrong":["Религиозное философское учение, которое признает существование бога, как сверхъестественного существа, обладающего разумом и волей, и таинственным образом воздействующего на все материальные и духовные процессы.","Вера в общее происхождение какой-либо группы людей с определенным видом животных, растений, предметом или явлений.","Вера в одушевление всех окружающих явлений как материального, так и духовного."],"last":"","note":"","explain":"Мифология — первобытная форма мировоззрения, фантастическое отражение мира в устных сказаниях. Остальные определения описывают теизм, тотемизм и анимизм.","disputed":false},{"n":"11","topic":0,"q":"Основоположником даосизма был:","correct":"Лао-цзы","wrong":["Чжан Хэн","Ян Шан","Чжан Цянь"],"last":"","note":"","explain":"Лао-цзы (VI–V вв. до н. э.) — легендарный китайский мудрец, которому приписывают трактат «Дао дэ цзин», главный текст даосизма.","disputed":false},{"n":"12","topic":0,"q":"Основоположником конфуцианства был:","correct":"Конфуций","wrong":["Ян Шан","Лао Цянь","Мао Цзы"],"last":"","note":"","explain":"Конфуций (Кун-цзы, 551–479 до н. э.) — китайский мыслитель; его учение записали ученики в книге «Лунь юй».","disputed":false},{"n":"13","topic":0,"q":"К какому времени относится возникновение ислама?","correct":"662 год.","wrong":["VI – V вв. до н. э.","Первая половина I в.","V – VI вв."],"last":"","note":"","explain":"По ключу экзамена — 662 год (видимо, опечатка вместо 622 — года хиджры). Принято считать, что ислам возник в начале VII в.: проповедь Мухаммеда с 610 г., хиджра — 622 г.","disputed":true},{"n":"14","topic":0,"q":"Что такое Сунна?","correct":"Сборник преданий о жизни, поступках и высказываниях пророка Мухаммеда, как образец и руководство для каждого мусульманина.","wrong":["Свод религиозно-этнических предписаний ислама, опирающихся на Коран.","Разработанная в Средние века мусульманская религиозно-правовая доктрина.","Одна из сект в исламе."],"last":"","note":"","explain":"Сунна — священное предание, второй после Корана источник ислама; она состоит из хадисов о словах и делах Пророка.","disputed":false},{"n":"15","topic":8,"q":"Что такое суфизм?","correct":"Мистико-аскетическое течение внутри ислама.","wrong":["Принципы организации и функционирования халифата.","Особый договор между общиной и претендентом на халифат.","Правовая система, соединившая религиозные и светские нормы."],"last":"","note":"","explain":"Суфизм — мистико-аскетическое течение ислама: путь к Богу через аскезу, духовное самосовершенствование и любовь к Всевышнему.","disputed":false},{"n":"16","topic":0,"q":"Христианство возникло в:","correct":"I в. н. э. в Палестине","wrong":["IV в. до н. э. в Индии","VI в. до н. э. в Китае","V в. н. э. в Византии"],"last":"","note":"","explain":"Христианство зародилось в I в. н. э. в Палестине, восточной провинции Римской империи, и затем распространилось по всей империи.","disputed":false},{"n":"17","topic":6,"q":"Богиня плодородия и материнства у кочевников:","correct":"Умай-Ана","wrong":["Томирис","Айша Биби","Бопай"],"last":"","note":"","explain":"Умай-ана — тюркская богиня плодородия, покровительница матерей, детей и домашнего очага в пантеоне тенгрианства.","disputed":false},{"n":"18","topic":5,"q":"К какому типу цивилизации относится казахская культура:","correct":"Кочевой","wrong":["Западной","Среднеазиатской","Ближневосточной"],"last":"","note":"","explain":"Казахская культура сформировалась на основе кочевого скотоводческого уклада евразийских степей.","disputed":false},{"n":"19","topic":6,"q":"Первопредок тюркских шаманов, музыкант и жырау:","correct":"Коркыт","wrong":["Ж. Баласагуни","К. А. Иасауи","Асан Кайгы"],"last":"","note":"","explain":"Коркыт-ата — легендарный огузо-кыпчакский жырау и баксы-шаман, по преданию создатель кобыза и покровитель музыкантов.","disputed":false},{"n":"20","topic":4,"q":"Мифы, повествующие о конце света, называют:","correct":"Эсхатологическими","wrong":["Космогоническими","Астральными","Этиологическими"],"last":"","note":"","explain":"Эсхатологические мифы (греч. eschatos — последний) рассказывают о конце света, а космогонические — о сотворении мира.","disputed":false},{"n":"21","topic":3,"q":"Семиотика – наука о:","correct":"Знаковых системах","wrong":["Символических системах","Формальных системах","Научных системах"],"last":"","note":"","explain":"Семиотика (греч. semeion — знак) изучает знаки и знаковые системы; её основатели — Ч. Пирс и Ф. де Соссюр.","disputed":false},{"n":"22","topic":6,"q":"Мифологический предок древних тюрков:","correct":"волк","wrong":["лебедь","лошадь","тигр"],"last":"","note":"","explain":"По легенде, правящий род тюрков Ашина произошёл от волчицы; образ серого волка (көк бөрі) стал тотемом древних тюрков.","disputed":false},{"n":"23","topic":9,"q":"Как называется восточный Новый год у казахов:","correct":"«Наурыз»","wrong":["«День Независимости»","«День Победы»","«Алас»"],"last":"","note":"","explain":"Наурыз — праздник весеннего равноденствия, восточный Новый год и начало обновления природы; в Казахстане его отмечают 21–23 марта.","disputed":false},{"n":"24","topic":8,"q":"В каком городе находится мавзолей Х. А. Яссауи?","correct":"Туркестан","wrong":["Исфиджаб","Шаш","Тараз"],"last":"","note":"","explain":"Мавзолей Ходжи Ахмеда Яссауи стоит в Туркестане (древнем Яссы); его строили по приказу Тимура с 1389 г., он входит в список ЮНЕСКО.","disputed":false},{"n":"25","topic":8,"q":"Х. А. Яссауи был…","correct":"основоположником тюркского суфизма","wrong":["полководцем","шаманом","жырау"],"last":"","note":"","explain":"Ходжа Ахмед Яссауи (XII в.) основал суфийский орден Яссавия и написал сборник «Диван-и Хикмет» на тюркском языке.","disputed":false},{"n":"26","topic":5,"q":"Основной способ передачи знаний у кочевников:","correct":"устное народное творчество","wrong":["книги","письменные источники","школы"],"last":"","note":"","explain":"У кочевников знания, история и шежире передавались устно — через жырау, акынов, сказителей, эпос и песни.","disputed":false},{"n":"27","topic":0,"q":"Название эпохи Возрождения:","correct":"Ренессанс","wrong":["Рационализм","Антропоцентризм","Сциентизм"],"last":"","note":"","explain":"Ренессанс (фр. renaissance — возрождение) — эпоха XIV–XVI вв., возродившая интерес к античному наследию.","disputed":false},{"n":"28","topic":0,"q":"В каком направлении получила развитие Реформация?","correct":"религиозное направление","wrong":["научное направление","политическое направление","гуманистическое направление"],"last":"","note":"","explain":"Реформация — религиозное движение XVI в. (М. Лютер, 1517) за обновление католической церкви, которое дало начало протестантизму.","disputed":false},{"n":"29","topic":0,"q":"Священной книгой какой религии является «Авеста»?","correct":"Зороастризм","wrong":["Шаманизм","Анимизм","Тотемизм"],"last":"","note":"","explain":"«Авеста» — священная книга зороастризма; её основу приписывают пророку Заратуштре.","disputed":false},{"n":"30","topic":9,"q":"Что входит в понятие «архетип» казахской культуры?","correct":"Евразийская степная культура, тенгрианство и тюркская цивилизация","wrong":["религия, право, политика","министерство, департамент, учреждение","театр, филармония, кинотеатр"],"last":"","note":"","explain":"Архетип — глубинная основа культуры. Для казахской культуры это степная кочевая традиция Евразии, тенгрианство и тюркская цивилизация.","disputed":false},{"n":"31","topic":1,"q":"Основные элементы культуры:","correct":"все варианты верны","wrong":["знаки, символы, язык","ценности, правила, стандарты поведения, привычки, манеры, этикет","социальные нормы, позитивные санкции, негативные санкции"],"last":"все варианты верны","note":"","explain":"Культура включает знаково-символические элементы (язык, символы), ценности и нормы поведения, а также систему санкций, так что верно всё перечисленное.","disputed":false},{"n":"32","topic":1,"q":"Коммуникативное пространство, объединяющее как физическое (ландшафт, климат и т.д.), так и символическое, духовное начала (язык, нормы, обычаи, ритуалы и т.д.).","correct":"культурное","wrong":["развивающее","обучающее","традиционное"],"last":"","note":"","explain":"Культурное пространство соединяет физическую среду (ландшафт, климат) и символическую (язык, нормы, обычаи, ритуалы), в которой люди общаются и передают культуру.","disputed":false},{"n":"33","topic":0,"q":"Что означает термин «плюрализм»?","correct":"множественность","wrong":["единоличность","выборность","выборочность"],"last":"","note":"В оригинале варианты C и D одинаковые («выборность»); вариант D заменён на «выборочность», чтобы не было дубля.","explain":"Плюрализм (лат. pluralis — множественный) — множественность мнений, ценностей и культурных форм; противоположность монизму.","disputed":false},{"n":"34","topic":1,"q":"Парадигмы осевых культурных форм:","correct":"когнитивные, ценностные, регулятивные","wrong":["аксиология повседневности, идеологические","финальные, инструментальные, производные","житейские знания, мистические верования, рациональные формы знаний"],"last":"","note":"","explain":"Осевые формы культуры складываются в три парадигмы: познание мира (когнитивные), система ценностей (ценностные) и нормы поведения (регулятивные).","disputed":false},{"n":"35","topic":1,"q":"Название народного творчества, которое создается различными слоями населения, связан с традициями данной местности, демократичен, в его создании участвуют все желающие.","correct":"фольклор","wrong":["театр","кино","анимация"],"last":"","note":"","explain":"Фольклор (англ. folk-lore — народная мудрость) — коллективное, обычно устное народное творчество, связанное с местными традициями.","disputed":false},{"n":"36","topic":1,"q":"Как называется культура, не лишенная высокого художественного содержания и эстетического выражения","correct":"арт-культура","wrong":["мид-культура","кич-культура","сюрреализм"],"last":"","note":"","explain":"В массовой культуре выделяют кич-, мид- и арт-культуру. Арт-культура — высший уровень: она сохраняет художественную ценность и эстетическую выразительность.","disputed":false},{"n":"37","topic":5,"q":"Столица древнего государства уйсуней","correct":"Чигучен","wrong":["Битобе","Балыкты","Чирик-Рабат"],"last":"","note":"","explain":"Чигучен («Город Красной долины») — ставка усуньского правителя-гуньмо у озера Иссык-Куль.","disputed":false},{"n":"38","topic":5,"q":"Признаки кочевничества","correct":"все перечисленные","wrong":["экстенсивное скотоводство","периодические перекочевки","особая материальная культура"],"last":"все перечисленные","note":"","explain":"Для кочевничества характерны экстенсивное скотоводство, сезонные перекочёвки и особая мобильная материальная культура (юрта, утварь), так что верны все признаки.","disputed":false},{"n":"39","topic":5,"q":"Менталитет кочевников – это...","correct":"все варианты верны","wrong":["специфическое восприятие пространства и времени","обычаи гостеприимства","неприхотливость и выносливость"],"last":"все варианты верны","note":"","explain":"Менталитет кочевников включает особое восприятие пространства и времени, гостеприимство, неприхотливость и выносливость, поэтому верны все варианты.","disputed":false},{"n":"40","topic":6,"q":"Главная особенность тюркской цивилизации:","correct":"номадизм и оседлость не являются обособленными и изолированными частями общества","wrong":["кочевание – смысл существования номадов","оседлость – обособленная часть кочевого общества","номадизм и оседлость – обособленные и изолированные части общества"],"last":"","note":"","explain":"Тюркская цивилизация сочетала кочевое скотоводство с оседлым земледелием и городами; оба уклада были связаны между собой и дополняли друг друга.","disputed":false},{"n":"41","topic":6,"q":"Впервые руническое письмо «Орхоно-Енисейская каменная надпись» расшифровал:","correct":"В. Томсен","wrong":["Н. Ядринцев","Д. Мессершмидт","Ф. Страленберг"],"last":"","note":"","explain":"Датский лингвист Вильгельм Томсен расшифровал древнетюркские руны в 1893 г. Ядринцев нашёл орхонские памятники, а Мессершмидт и Страленберг — енисейские надписи.","disputed":false},{"n":"42","topic":6,"q":"Основатель государства гуннов","correct":"Моде","wrong":["Аттила","Чжи-Чжи","Лаушан"],"last":"","note":"","explain":"Шаньюй Моде (Маодунь) объединил племена хунну в державу в 209 г. до н. э.; Аттила правил европейскими гуннами гораздо позже, в V в.","disputed":false},{"n":"43","topic":9,"q":"К казахским эпосам не относится:","correct":"«Манас»","wrong":["«Кобланды»","«Алпамыс»","«Кыз Жибек»"],"last":"","note":"","explain":"«Манас» — киргизский героический эпос, а «Кобланды», «Алпамыс» и «Кыз Жибек» — казахские эпосы.","disputed":false},{"n":"44","topic":9,"q":"Как называется состязание акынов:","correct":"Айтыс","wrong":["Сарын","Кюй","Напев"],"last":"","note":"","explain":"Айтыс — состязание акынов-импровизаторов под домбру; сарын — мелодия, напев песни, а кюй — инструментальная пьеса.","disputed":false},{"n":"45","topic":10,"q":"Реформатором казахского алфавита был:","correct":"А. Байтурсынов","wrong":["И. Алтынсарин","А. Кунанбаев","Ш. Кудайбердиев"],"last":"","note":"","explain":"Ахмет Байтурсынов создал «төте жазу» — реформированный арабский алфавит, приспособленный к звукам казахского языка (1910-е гг.).","disputed":false},{"n":"46","topic":4,"q":"Какой вид искусства появился в 20 веке на основе синтеза искусства и техники:","correct":"Кино","wrong":["Живопись","Скульптура","Графика"],"last":"","note":"","explain":"Кино возникло на рубеже XIX–XX вв. благодаря технике (братья Люмьер, 1895) и стало главным синтетическим искусством XX века, соединив изображение, движение, звук и драматургию.","disputed":false},{"n":"47","topic":10,"q":"Казахский ученый, путешественник и этнограф начала 19 века:","correct":"Ч. Валиханов","wrong":["Аль-Фараби","И. Алтынсарин","А. Кунанбаев"],"last":"","note":"В формулировке «начала 19 века», хотя Валиханов жил в середине XIX в.; формулировка сохранена, ответ однозначен.","explain":"Чокан Валиханов (1835–1865) — учёный-востоковед середины XIX в., путешественник (Кашгария, Иссык-Куль) и этнограф, первым записавший фрагменты эпоса «Манас».","disputed":false},{"n":"48","topic":10,"q":"Выдающийся казахский композитор – кюйши, выходец из Западного Казахстана, автор знаменитых кюев «Адай», «Сарыарка» – это:","correct":"Курмангазы","wrong":["Даулеткерей","Таттимбет","Сейтек"],"last":"","note":"","explain":"Курмангазы Сагырбайулы (XIX в.) — великий кюйши родом из Западного Казахстана, автор кюев «Адай», «Сарыарка», «Балбырауын».","disputed":false},{"n":"49","topic":10,"q":"Великий казахский поэт 19 века, переводивший произведения Лермонтова и Пушкина на казахский язык:","correct":"Абай","wrong":["Г. Мусрепов","Г. Мустафин","Ш. Уалиханов"],"last":"","note":"","explain":"Абай Кунанбаев перевёл на казахский отрывки из «Евгения Онегина» Пушкина (письмо Татьяны) и стихи Лермонтова.","disputed":false},{"n":"50","topic":9,"q":"Главные герои эпоса «Кыз Жибек»:","correct":"Толеген и Жибек","wrong":["Козы-Корпеш","Кобыланды","Алпамыс"],"last":"","note":"","explain":"Лиро-эпическая поэма «Кыз Жибек» рассказывает о любви батыра Толегена и красавицы Жибек; Козы-Корпеш, Кобыланды и Алпамыс — герои других эпосов.","disputed":false},{"n":"51","topic":8,"q":"По инициативе какого правителя был построен Мавзолей А. Яссауи:","correct":"Темирлан","wrong":["Жанибек хан","Барак хан","Абулхаир хан"],"last":"","note":"","explain":"Мавзолей Ходжи Ахмеда Яссауи в Туркестане возведён в 1389–1405 гг. по приказу Тимура (Темирлана); с 2003 г. он входит в список Всемирного наследия ЮНЕСКО.","disputed":false},{"n":"52","topic":9,"q":"К какому жанру относятся народные произведения: «Кобланды – батыр», «Козы-Корпеш», «Баян-Сулу»:","correct":"эпосу","wrong":["песням","сказкам","философии"],"last":"","note":"","explain":"«Кобланды батыр» — героический, а «Козы Корпеш – Баян сулу» — лиро-эпический казахский эпос; такие поэмы исполняли жырау и акыны.","disputed":false},{"n":"53","topic":0,"q":"Общее название упадочных явлений в европейской культуре второй половины 19 – начала 20 вв.:","correct":"декаданс","wrong":["вестернизация","аномия","барокко"],"last":"","note":"","explain":"Декаданс (франц. décadence — «упадок») — настроения конца XIX — начала XX вв.: пессимизм, эстетизм, культ «искусства для искусства».","disputed":false},{"n":"54","topic":15,"q":"В каком году принята Государственная программа «Мәдени мұра»?","correct":"2003 г.","wrong":["1991 г.","1996 г.","2000 г."],"last":"","note":"","explain":"Программа «Мәдени мұра» («Культурное наследие») выдвинута по инициативе Н. Назарбаева в 2003 г.; указ о её утверждении подписан в январе 2004 г., и с 2004 г. она реализовывалась.","disputed":false},{"n":"55","topic":10,"q":"К какому периоду относится культура «Зар заман»?","correct":"XVIII – XIX вв.","wrong":["XII в.","XIV в.","XVI в."],"last":"","note":"","explain":"«Зар заман» («эпоха скорби») — поэзия Шортанбая, Дулата, Мурата, оплакивавших утрату независимости казахов в период колонизации конца XVIII — XIX вв.","disputed":false},{"n":"56","topic":12,"q":"Кто впервые высказал мнение о евразийском начале казахской культуры?","correct":"Л. Гумилев","wrong":["Ч. Валиханов","Н. Конрад","А. Маргулан"],"last":"","note":"","explain":"Л. Н. Гумилёв, «последний евразиец», доказывал единство Великой степи и евразийскую природу кочевых культур, в том числе казахской.","disputed":false},{"n":"57","topic":1,"q":"В основе формирования этнических и национальных культур лежит…","correct":"Единство языка","wrong":["Общность религиозных представлений","Совместное проживание людей на определенной территории","Нет правильного ответа"],"last":"Нет правильного ответа","note":"","explain":"Язык — главный признак этноса и хранитель его культуры: через язык передаются фольклор, традиции и картина мира народа.","disputed":false},{"n":"58","topic":1,"q":"Аксиологический подход к культуре означает: культура – это:","correct":"Мир ценностей","wrong":["Мир человека","Мир разума","Мир символов"],"last":"","note":"","explain":"Аксиология (от греч. axia — «ценность») — учение о ценностях; в этом подходе культура понимается как совокупность материальных и духовных ценностей.","disputed":false},{"n":"59","topic":1,"q":"Культура, отличающаяся от основной культуры какими-либо этническими, языковыми или религиозными признаками, называется","correct":"Субкультурой","wrong":["Элитарной культурой","Контркультурой","Антикультурой"],"last":"","note":"","explain":"Субкультура — часть общей культуры со своими особенностями (этническими, языковыми, религиозными, возрастными), которая, в отличие от контркультуры, не противостоит ей.","disputed":false},{"n":"60","topic":1,"q":"Культурный процесс – это…","correct":"Процесс создания культуры","wrong":["Типические устойчивые повторяющиеся функциональные процедуры","Конкретно-исторические события культурной жизни","Форма культурной деятельности человека"],"last":"","note":"","explain":"По ключу экзамена — процесс создания культуры. В учебнике А. Флиера культурные процессы — это не конкретно-исторические события, а типические устойчивые повторяющиеся функциональные процедуры.","disputed":true},{"n":"61","topic":1,"q":"Система образов, характеризующая устройство мироздания, включающее отношение человека к миру – это…","correct":"Мировоззрение","wrong":["Менталитет","Идеология","Картина мира"],"last":"","note":"","explain":"По ключу экзамена — мировоззрение: система взглядов на мир и место в нём человека. В учебниках же «система образов, характеризующая устройство мироздания» — обычно определение картины мира.","disputed":true},{"n":"62","topic":1,"q":"Культурогенез","correct":"Процесс постоянного порождения новых культурных форм и систем","wrong":["Процесс освоения индивидом норм и ценностей культуры","Возрождение культурных форм и систем прошлого","Однократное событие зарождения культуры"],"last":"","note":"","explain":"Культурогенез — не только однократное зарождение культуры, а непрерывное порождение новых культурных форм и систем; освоение индивидом норм культуры называется инкультурацией.","disputed":false},{"n":"63","topic":0,"q":"Буржуазная культура с характерным для нее типом автономной личности, возникла в эпоху…","correct":"Нового времени","wrong":["Раннегородских цивилизаций","Новейшего времени","Первобытного общества"],"last":"","note":"","explain":"В Новое время (XVII–XIX вв.) с развитием капитализма сложилась буржуазная культура: индивидуализм, рационализм и идеал автономной, свободной личности.","disputed":false},{"n":"64","topic":0,"q":"Постмодерн как новый тип культуры…","correct":"Противопоставляет друг другу безликого «массового человека» и эгоцентричного","wrong":["Разрушает систему символических противоположностей","Устанавливает новые системы отношений","Возвращает к патриархальному, религиозному типу культуры"],"last":"","note":"В источнике вариант обрывается на слове «эгоцентричного».","explain":"По ключу экзамена — противопоставление безликого «массового человека» и эгоцентричной личности. Обычно это относят к модерну, а постмодерну приписывают разрушение системы символических противоположностей.","disputed":true},{"n":"65","topic":0,"q":"Постмодерн как новый тип культуры…","correct":"Противопоставляет друг другу безликого «массового человека» и эгоцентричного","wrong":["Предлагает эстетический гедонизм","Разрушает систему символических противоположностей","Устанавливает новые системы отношений"],"last":"","note":"В источнике вариант обрывается на слове «эгоцентричного».","explain":"По ключу экзамена — противопоставление «массового человека» и эгоцентричной личности. Учебники обычно называют главной чертой постмодерна разрушение системы символических (бинарных) противоположностей.","disputed":true},{"n":"66","topic":0,"q":"Народ, который придумал первую в мире письменность:","correct":"Шумеры","wrong":["Египтяне","Арабы","Китайцы"],"last":"","note":"","explain":"Шумеры Месопотамии около 3300–3000 гг. до н. э. создали клинопись — древнейшую известную систему письма; её выдавливали на глиняных табличках.","disputed":false},{"n":"67","topic":6,"q":"Первой хозяйственной деятельностью, с которой древние тюрки вышли на мировую арену была","correct":"добыча железа","wrong":["производство шелка","добыча меди","производство бархата"],"last":"","note":"","explain":"Тюрки рода Ашина на Алтае были «плавильщиками железа» у жужаней; окрепнув, в 552 г. они разгромили жужаней и основали Тюркский каганат.","disputed":false},{"n":"68","topic":1,"q":"Идея о том, что цивилизация – это прогресс культуры, принадлежит:","correct":"Белл","wrong":["Шпенглер, Руссо, Фурье","Гердер, Тайлор, Тойнби","Данилевский"],"last":"","note":"","explain":"Д. Белл, автор теории постиндустриального общества, связывал развитие цивилизации с технологическим прогрессом: доиндустриальная, индустриальная и постиндустриальная стадии.","disputed":false},{"n":"69","topic":6,"q":"Впервые древнетюркскую письменность расшифровал","correct":"В. Томсен","wrong":["Ф. Рихтгофен","А. Дженкинсон","А. Гумбольдт"],"last":"","note":"","explain":"Датский лингвист Вильгельм Томсен в 1893 г. расшифровал орхоно-енисейские надписи; первыми он прочитал слова «тенгри» и «тюрк».","disputed":false},{"n":"70","topic":1,"q":"«Цивилизация – это конец культуры, её старость, антипод духовности». Эта мысль принадлежит:","correct":"Шпенглер, Руссо, Фурье","wrong":["Морган","Гердер, Тайлор, Тойнби","Данилевский"],"last":"","note":"","explain":"О. Шпенглер в «Закате Европы» назвал цивилизацию финалом и «старостью» культуры; ещё раньше Ж.-Ж. Руссо и Ш. Фурье критиковали цивилизацию как источник порчи нравов.","disputed":false},{"n":"71","topic":6,"q":"Научное название древнетюркской письменности","correct":"орхоно-енисейская","wrong":["керулено-орхонская","енисейско-амурская","амурско-уссурийская"],"last":"","note":"","explain":"Название дано по рекам Орхон (Монголия) и Енисей (Сибирь), где найдены рунические памятники — надписи в честь Кюль-тегина, Бильге-кагана и Тоньюкука.","disputed":false},{"n":"72","topic":6,"q":"По представлению древних тюрков творцом мира является","correct":"Тенгри","wrong":["Умай ана","Эрлик (Эрклиг)","Ахурамазда"],"last":"","note":"","explain":"Тенгри — верховное божество Вечного Синего Неба, творец мира у древних тюрков; вера в него называется тенгрианством. Эрлик — владыка подземного мира.","disputed":false},{"n":"73","topic":6,"q":"Покровительницей домашнего очага и детей у древних тюрков была","correct":"Умай ана","wrong":["Домалак ана","Жер ана","Карашаш ана"],"last":"","note":"","explain":"Умай — женское божество плодородия, покровительница очага, рожениц и детей; упоминается в орхонских надписях рядом с Тенгри.","disputed":false},{"n":"74","topic":8,"q":"У тюрков, почитаемым до сегодняшнего дня является","correct":"Коркыт Ата","wrong":["Умай ана","Баба Ата","Зенги баба"],"last":"","note":"","explain":"Коркыт Ата — легендарный мудрец и сказитель огузов (по преданию, IX в.), почитаемый всеми тюркскими народами; его мемориал стоит на Сырдарье в Кызылординской области.","disputed":false},{"n":"75","topic":8,"q":"Коркыт Ата считается создателем","correct":"кобыза","wrong":["бубена","жетыгена","домбры"],"last":"","note":"","explain":"По легенде, Коркыт, спасаясь от смерти, создал кобыз — смычковый инструмент баксы; его кюи («Коркыт күйлері») исполняют до сих пор.","disputed":false},{"n":"76","topic":0,"q":"Конфуцианство возникло в:","correct":"VI в. до н. э. в Китае","wrong":["IV в. до н. э. в Индии","I в. н. э. в Палестине","V в. н. э. в Византии"],"last":"","note":"В источнике вопрос искажён: варианты B–D слиты с утраченным вопросом 77; неверные варианты восстановлены по параллельным вопросам банка (16 и 78).","explain":"Конфуций (551–479 гг. до н. э.) жил в Китае; его учение о «благородном муже», почитании старших и ритуале на века стало основой китайской культуры.","disputed":false},{"n":"78","topic":0,"q":"Буддизм возник в:","correct":"IV в. до н. э. в Индии","wrong":["VI в. до н. э. в Китае","I в. н. э. в Палестине","V в. н. э. в Византии"],"last":"","note":"","explain":"По ключу экзамена — IV в. до н. э. в Индии. Место верно, но учебники обычно датируют возникновение буддизма VI–V вв. до н. э. — временем жизни Будды Шакьямуни.","disputed":true},{"n":"79","topic":0,"q":"Боги Древней Индии:","correct":"Брахма, Вишну и Шива","wrong":["Осирис, Исида, Маат, Тот, Ра","Денгир, Мардук, Шамаш, Ан-Ки","Артемида, Гелиос, Ника, Дионис"],"last":"","note":"","explain":"Брахма, Вишну и Шива составляют тримурти индуизма: Брахма — творец, Вишну — хранитель, Шива — разрушитель мира. Осирис и Ра — боги Египта, Артемида — Греции.","disputed":false},{"n":"80","topic":0,"q":"Эпические поэмы «Рамаяна» и «Махабхарата» – это памятники культуры:","correct":"Индии","wrong":["Египта","Шумеров","Китая"],"last":"","note":"","explain":"«Рамаяна» и «Махабхарата» — древнеиндийские эпосы на санскрите; частью «Махабхараты» является философская поэма «Бхагавадгита».","disputed":false},{"n":"81","topic":0,"q":"Основоположником буддизма был:","correct":"Сиддхартха Гаутама","wrong":["Арьябхата","Лао-Цзы","Заратуштра"],"last":"","note":"","explain":"Принц Сиддхартха Гаутама из рода Шакья после просветления стал Буддой («пробуждённым»). Лао-цзы основал даосизм, Заратуштра — зороастризм.","disputed":false},{"n":"82","topic":0,"q":"Основное понятие буддизма – это:","correct":"Страдание","wrong":["Ритуал","Польза","Сострадание"],"last":"","note":"","explain":"Первая из четырёх благородных истин буддизма: жизнь есть страдание (дуккха); цель учения — избавиться от страдания и достичь нирваны.","disputed":false},{"n":"83","topic":0,"q":"В какой исторический период появилось христианство?","correct":"В период острого социально-экономического кризиса Римской империи","wrong":["Подъема и могущества Рима","Разделения мира на священные и мирские феномены","Упования на загробную жизнь"],"last":"","note":"","explain":"Христианство возникло в I в. н. э. в Палестине под властью Рима; учебники связывают его распространение с кризисом рабовладельческого общества, когда угнетённые искали надежду на спасение.","disputed":false},{"n":"84","topic":7,"q":"Древнее название города Отрар:","correct":"Фараб","wrong":["Шам","Ташкент","Тараз"],"last":"","note":"","explain":"Отрар на Сырдарье в ранних источниках назывался Фараб; отсюда родом аль-Фараби, получивший прозвище по названию родного города.","disputed":false},{"n":"85","topic":5,"q":"Сборно-разборное жилище кочевников – это:","correct":"юрта","wrong":["шалаш","яранга","изба"],"last":"","note":"","explain":"Юрта (киіз үй) — переносное жилище из деревянного каркаса (кереге, уык, шанырак) и войлока; её быстро собирают и перевозят при кочёвке.","disputed":false},{"n":"86","topic":6,"q":"Символ единения и гостеприимства у тюрков:","correct":"казан","wrong":["юрта","фибула","акинак"],"last":"","note":"","explain":"Казан — общий котёл, у которого собирается род и угощают гостей; символ единства — знаменитый Тайказан, отлитый по приказу Тимура для мавзолея Яссауи.","disputed":false},{"n":"87","topic":7,"q":"Автор труда «Великая книга о музыке»?","correct":"Аль-Фараби","wrong":["Дарвиш Али","Абу Али Ибн-Сина","Каукаби Эль-Бахари"],"last":"","note":"","explain":"Аль-Фараби, «Второй учитель» после Аристотеля, написал «Китаб аль-мусики аль-кабир» («Большая книга о музыке») — основу восточной теории музыки.","disputed":false},{"n":"88","topic":6,"q":"К какой этнокультурной группе относятся гунны?","correct":"Прототюркская","wrong":["Индоевропейская","Протоалтайская","Иранская"],"last":"","note":"","explain":"Гунны (хунну) считаются прототюрками: их держава у границ Китая возникла в III в. до н. э., а в Европе они прославились при Аттиле (V в.).","disputed":false},{"n":"89","topic":5,"q":"Представителем какой культуры является ученый Анахарсис?","correct":"Скифо-сакская","wrong":["Гуннская","Казахская","Уйсуньская"],"last":"","note":"","explain":"Анахарсис — скифский мудрец VI в. до н. э., побывавший в Афинах; греки причисляли его к семи мудрецам древности.","disputed":false},{"n":"90","topic":6,"q":"Как называется культ неба древних тюрков?","correct":"Тенгри","wrong":["Жер Су","Умай","Зардеш"],"last":"","note":"","explain":"Тенгрианство — культ Вечного Синего Неба (Тенгри), главная религия древних тюрков; Жер-Су — божество земли и воды, Умай — покровительница очага.","disputed":false},{"n":"91","topic":0,"q":"Название средневековой массовой культуры:","correct":"Карнавально-юмористическая","wrong":["Народная","Схоластическая","Рыцарская"],"last":"","note":"","explain":"М. Бахтин описал народную смеховую, карнавальную культуру Средневековья как противовес официальной церковной культуре.","disputed":false},{"n":"92","topic":9,"q":"Слово «казах» начинает приобретать этническое значение с","correct":"XIV в.","wrong":["XIII в.","XII в.","XV в."],"last":"","note":"","explain":"Слово «казах» («вольный человек») известно с XIII в. как социальный термин; с XIV в. оно обретает этнический смысл и после образования Казахского ханства (1465) закрепляется за народом.","disputed":false},{"n":"93","topic":0,"q":"Гуманизм – это:","correct":"Человечность","wrong":["Узнаваемость","Культура","Хорошие манеры"],"last":"","note":"","explain":"Гуманизм (от лат. humanus — «человечный») признаёт высшей ценностью человека, его достоинство и свободу; как течение расцвёл в эпоху Возрождения.","disputed":false},{"n":"94","topic":0,"q":"Какое средневековое государство стало наследником античной культурной традиции:","correct":"Византия","wrong":["Франция","Германия","Англия"],"last":"","note":"","explain":"Византия (Восточная Римская империя) до 1453 г. сохраняла греко-римское наследие: греческий язык, римское право, античную философию и науку.","disputed":false},{"n":"95","topic":4,"q":"Что означает «катарсис»?","correct":"Нравственное очищение после потрясения или страдания","wrong":["Терпимость","Наслаждение","Счастье"],"last":"","note":"","explain":"Катарсис (греч. «очищение») — термин Аристотеля: очищение души зрителя через сопереживание и потрясение, которые вызывает трагедия.","disputed":false},{"n":"96","topic":1,"q":"В каком смысле употребляется в научной литературе понятие «вторая природа»:","correct":"Культура","wrong":["Общество","Образование","Техника"],"last":"","note":"","explain":"«Второй природой» называют культуру — искусственный мир, созданный человеком в дополнение к первой, естественной природе.","disputed":false},{"n":"97","topic":4,"q":"Основополагающие институты культуры","correct":"миф; религия; искусство; наука","wrong":["религия, право, политика","министерство, департамент, учреждение","театр, филармония, кинотеатр"],"last":"","note":"","explain":"Миф, религия, искусство и наука — базовые формы духовной культуры, задающие ценности и смыслы; министерства, театры и филармонии — лишь учреждения.","disputed":false},{"n":"98","topic":11,"q":"Автор книги «Аз и Я» – это:","correct":"О. Сулейменов","wrong":["М. Шаханов","Ч. Айтматов","Г. Мустафин"],"last":"","note":"","explain":"В книге Олжаса Сулейменова «Аз и Я» (1975) «Слово о полку Игореве» прочитано через тюркскую лексику; книгу резко раскритиковали и изъяли из библиотек.","disputed":false},{"n":"99","topic":0,"q":"Кто написал поэму «Илиада»:","correct":"Гомер","wrong":["Аристотель","Сократ","Платон"],"last":"","note":"","explain":"Гомер — легендарный древнегреческий поэт (около VIII в. до н. э.), автор эпических поэм «Илиада» и «Одиссея» о Троянской войне.","disputed":false}],"extra":[{"n":"t1-1","topic":1,"q":"Автор концепции «вызова и ответа», изложенной в многотомном труде «Постижение истории»:","correct":"А. Тойнби","wrong":["О. Шпенглер","П. Сорокин","С. Хантингтон"],"last":"","note":"","explain":"Арнольд Тойнби в «Постижении истории» объяснял возникновение и развитие цивилизаций их ответами на вызовы природной и исторической среды.","disputed":false},{"n":"t1-2","topic":1,"q":"Кому принадлежит концепция «столкновения цивилизаций»?","correct":"С. Хантингтону","wrong":["Л. Гумилёву","Ф. Боасу","Э. Тайлору"],"last":"","note":"","explain":"Американский политолог Сэмюэл Хантингтон в статье 1993 г. и книге 1996 г. утверждал, что главные конфликты будущего пройдут по границам цивилизаций.","disputed":false},{"n":"t1-3","topic":1,"q":"Автор теории этногенеза и пассионарности:","correct":"Л. Гумилёв","wrong":["П. Сорокин","К. Леви-Стросс","Л. Уайт"],"last":"","note":"","explain":"Лев Гумилёв в книге «Этногенез и биосфера Земли» связал рождение и угасание этносов с уровнем пассионарности — особой энергии и жертвенности людей.","disputed":false},{"n":"t1-4","topic":1,"q":"Кто в книге «Первобытная культура» (1871) определил культуру как сложное целое, включающее знания, верования, искусство, мораль, законы и обычаи?","correct":"Э. Тайлор","wrong":["Ф. Боас","З. Фрейд","К. Маркс"],"last":"","note":"","explain":"Определение Эдуарда Тайлора из «Первобытной культуры» считается первым классическим научным определением культуры в антропологии.","disputed":false},{"n":"t1-5","topic":1,"q":"Диахронный подход к изучению культуры рассматривает её:","correct":"в развитии во времени, в смене исторических этапов","wrong":["в состоянии на определённый момент времени","в распределении по географическим регионам","в структуре знаков и символов"],"last":"","note":"","explain":"Диахрония (греч. «через время») изучает изменение культуры в истории, а синхрония — её состояние в один и тот же момент времени.","disputed":false},{"n":"t2-1","topic":2,"q":"Гипотеза, согласно которой структура языка определяет мышление и способ восприятия мира его носителями, называется гипотезой:","correct":"Сепира–Уорфа","wrong":["Лотмана–Успенского","Соссюра–Балли","Тайлора–Фрэзера"],"last":"","note":"","explain":"Гипотеза лингвистической относительности названа по именам американских лингвистов Эдварда Сепира и Бенджамина Ли Уорфа: язык задаёт категории, через которые человек видит мир.","disputed":false},{"n":"t2-2","topic":2,"q":"Какой из перечисленных языков является искусственным, созданным для международного общения?","correct":"Эсперанто","wrong":["Латынь","Санскрит","Суахили"],"last":"","note":"","explain":"Эсперанто создал Людвик Заменгоф в 1887 г. как простой нейтральный язык для общения разных народов; латынь, санскрит и суахили — естественные языки.","disputed":false},{"n":"t2-3","topic":2,"q":"Знаки, которые обладают сходством с обозначаемым объектом (рисунок, фотография, карта), называются:","correct":"иконическими","wrong":["естественными","функциональными","конвенциональными"],"last":"","note":"","explain":"Иконический знак (от греч. «эйкон» — образ) похож на то, что обозначает: портрет напоминает человека, карта — местность.","disputed":false},{"n":"t2-4","topic":2,"q":"Дым как признак огня является примером знака:","correct":"естественного","wrong":["иконического","конвенционального","вербального"],"last":"","note":"","explain":"Естественные знаки — это явления природы, указывающие на связанные с ними другие явления: дым — на огонь, тучи — на дождь.","disputed":false},{"n":"t2-5","topic":2,"q":"К какой группе тюркских языков относится казахский язык?","correct":"Кыпчакской","wrong":["Огузской","Карлукской","Булгарской"],"last":"","note":"","explain":"Казахский язык входит в кыпчакскую группу тюркских языков вместе с татарским, башкирским, ногайским и каракалпакским.","disputed":false},{"n":"t3-1","topic":3,"q":"Кто ввёл в науку понятие «семиосфера» — семиотическое пространство, вне которого невозможно существование языка и культуры?","correct":"Ю. Лотман","wrong":["Р. Барт","Ф. де Соссюр","Э. Кассирер"],"last":"","note":"","explain":"Юрий Лотман, глава тартуско-московской семиотической школы, ввёл термин «семиосфера» в 1984 г. по аналогии с понятием «биосфера» В. Вернадского.","disputed":false},{"n":"t3-2","topic":3,"q":"Философ, автор «Философии символических форм», определивший человека как «символическое животное» (animal symbolicum):","correct":"Э. Кассирер","wrong":["Ю. Лотман","Р. Барт","Ю. Кристева"],"last":"","note":"","explain":"Эрнст Кассирер считал, что человек живёт в мире символов — языка, мифа, искусства, религии, науки, — поэтому назвал его «символическим животным».","disputed":false},{"n":"t3-3","topic":3,"q":"Швейцарский лингвист, автор «Курса общей лингвистики», предложивший создать науку о знаках — семиологию:","correct":"Ф. де Соссюр","wrong":["Ю. Лотман","Р. Барт","О. Сулейменов"],"last":"","note":"","explain":"Фердинанд де Соссюр рассматривал язык как систему знаков; его «Курс общей лингвистики» (1916) издали ученики уже после его смерти.","disputed":false},{"n":"t3-4","topic":3,"q":"Автор понятия «интертекстуальность», обозначающего взаимосвязь и перекличку текстов культуры:","correct":"Ю. Кристева","wrong":["Э. Кассирер","Ю. Лотман","Ф. де Соссюр"],"last":"","note":"","explain":"Юлия Кристева ввела термин «интертекстуальность» в 1967 г., опираясь на идеи М. Бахтина: любой текст строится как мозаика цитат и отсылок к другим текстам.","disputed":false},{"n":"t3-5","topic":3,"q":"Автор эскиза Государственного флага Республики Казахстан:","correct":"Шакен Ниязбеков","wrong":["Жандарбек Малибеков","Шамши Калдаяков","Абылхан Кастеев"],"last":"","note":"","explain":"Флаг с солнцем, парящим беркутом и национальным орнаментом по эскизу Шакена Ниязбекова утверждён 4 июня 1992 г.; авторы герба — Ж. Малибеков и Ш. Уалиханов.","disputed":false},{"n":"t4-1","topic":4,"q":"Поклонение неодушевлённым предметам, которым приписываются сверхъестественные свойства, — это:","correct":"Фетишизм","wrong":["Тотемизм","Анимизм","Деизм"],"last":"","note":"","explain":"Фетиш (от порт. feitiço — «амулет, колдовство») — предмет, которому приписывают магическую силу: камень, амулет, изображение.","disputed":false},{"n":"t4-2","topic":4,"q":"Религиозно-философское учение, согласно которому Бог создал мир, но не вмешивается в его дальнейшее существование, — это:","correct":"Деизм","wrong":["Пантеизм","Анимизм","Политеизм"],"last":"","note":"","explain":"Деизм, распространённый в эпоху Просвещения, признаёт Бога лишь первопричиной мира, который затем развивается по естественным законам.","disputed":false},{"n":"t4-3","topic":4,"q":"Учение, отождествляющее Бога и природу (мир), называется:","correct":"Пантеизм","wrong":["Деизм","Атеизм","Фетишизм"],"last":"","note":"","explain":"Пантеизм (греч. «пан» — всё, «теос» — бог) отождествляет Бога со всем сущим, с природой, как, например, в философии Спинозы.","disputed":false},{"n":"t4-4","topic":4,"q":"Какая группа религий относится к монотеистическим?","correct":"Иудаизм, христианство, ислам","wrong":["Индуизм, синтоизм, даосизм","Буддизм, конфуцианство, джайнизм","Анимизм, тотемизм, фетишизм"],"last":"","note":"","explain":"Монотеизм — вера в единого Бога; иудаизм, христианство и ислам называют авраамическими религиями, так как они восходят к пророку Аврааму (Ибрахиму).","disputed":false},{"n":"t4-5","topic":4,"q":"Философская наука, предметом изучения которой являются мораль и нравственность, — это:","correct":"Этика","wrong":["Эстетика","Логика","Онтология"],"last":"","note":"","explain":"Термин «этика» ввёл Аристотель (от греч. «этос» — нрав, обычай); эстетика изучает прекрасное, логика — законы мышления, онтология — бытие.","disputed":false},{"n":"t5-1","topic":5,"q":"В каком кургане был найден знаменитый «Золотой человек» — сакский воин в одежде с золотыми пластинами, ставший символом независимого Казахстана?","correct":"Иссык","wrong":["Берель","Бесшатыр","Бегазы"],"last":"","note":"","explain":"Иссыкский курган близ г. Есик раскопан в 1969–1970 гг. под руководством К. Акишева; «Золотой человек» стал одним из символов независимого Казахстана.","disputed":false},{"n":"t5-2","topic":5,"q":"Царица массагетов, в войне с которой погиб персидский царь Кир II:","correct":"Томирис","wrong":["Зарина","Спаретра","Айша-биби"],"last":"","note":"","explain":"По Геродоту, массагеты во главе с царицей Томирис разбили войско Кира II (530 г. до н. э.), и сам царь погиб в сражении.","disputed":false},{"n":"t5-3","topic":5,"q":"С каким завоевателем, согласно легенде, сражался герой Шу (поэма «Шу-батыр»)?","correct":"С Александром Македонским","wrong":["С Киром II","С Дарием I","С Чингисханом"],"last":"","note":"","explain":"Легенда о Шу, записанная Махмудом Кашгари, рассказывает о противостоянии степного правителя Шу войску Александра Македонского (Зулькарнайна).","disputed":false},{"n":"t5-4","topic":5,"q":"Как называется характерный для искусства саков и скифов стиль, основанный на изображении животных и сцен их борьбы?","correct":"Звериный стиль","wrong":["Геометрический стиль","Растительный стиль","Мавританский стиль"],"last":"","note":"","explain":"В зверином стиле выполнены оружие, конская сбруя и украшения саков: изображения оленей, барсов, архаров, грифонов, часто в сценах терзания.","disputed":false},{"n":"t5-5","topic":5,"q":"Античный писатель, сделавший сакского (скифского) мыслителя Токсарида героем диалога «Токсарид, или Дружба»:","correct":"Лукиан Самосатский","wrong":["Геродот","Платон","Ксенофонт"],"last":"","note":"","explain":"В диалоге Лукиана Самосатского (II в. н. э.) скиф Токсарид и грек Мнесипп спорят, чей народ преданнее в дружбе, и рассказывают истории о верных друзьях.","disputed":false},{"n":"t6-1","topic":6,"q":"Автор оперы «Аттила» (1846):","correct":"Джузеппе Верди","wrong":["Джакомо Пуччини","Рихард Вагнер","Гаэтано Доницетти"],"last":"","note":"","explain":"Опера Джузеппе Верди «Аттила» впервые поставлена в Венеции в 1846 г.; образ вождя гуннов привлекал многих европейских композиторов и драматургов.","disputed":false},{"n":"t6-2","topic":6,"q":"В каком памятнике скандинавского эпоса выведен образ Аттилы под именем Атли?","correct":"«Старшая Эдда»","wrong":["«Беовульф»","«Калевала»","«Песнь о Роланде»"],"last":"","note":"","explain":"В песнях «Старшей Эдды» («Песнь об Атли» и др.) вождь гуннов выступает как король Атли; в немецкой «Песни о Нибелунгах» он же носит имя Этцель.","disputed":false},{"n":"t6-3","topic":6,"q":"Китайская царевна Шижунь (Сицзюнь) из дома Хань, автор «Песни лебедя» о тоске по родине, была выдана замуж за правителя:","correct":"усуней","wrong":["хунну","кангюя","тюрков"],"last":"","note":"","explain":"Ханьская царевна Лю Сицзюнь стала женой усуньского правителя (куньмо); в её песне упомянуты юрта с войлочными стенами, мясная пища и кисломолочное питьё — ранний рассказ о быте кочевников.","disputed":false},{"n":"t6-4","topic":6,"q":"Древнетюркский поэт, составивший тексты надписей в честь Кюль-тегина и Бильге-кагана:","correct":"Йоллыг-тегин","wrong":["Тоньюкук","Махмуд Кашгари","Юсуф Баласагуни"],"last":"","note":"","explain":"Йоллыг-тегин, племянник Бильге-кагана, сам указал в надписях своё авторство; памятники Кюль-тегину (732 г.) и Бильге-кагану (735 г.) стоят в долине Орхона.","disputed":false},{"n":"t6-5","topic":6,"q":"Автор древнегреческой поэмы «Аримаспея», рассказывающей о народах евразийских степей:","correct":"Аристей Проконнесский","wrong":["Геродот","Гомер","Гесиод"],"last":"","note":"","explain":"Аристей из Проконнеса описал путешествие к исседонам и рассказы об аримаспах и грифах; содержание его поэмы известно в основном по пересказу Геродота.","disputed":false},{"n":"t7-1","topic":7,"q":"Автор «Канона врачебной науки»:","correct":"Абу Али ибн Сина","wrong":["Аль-Фараби","Абу Рейхан Бируни","Мухаммад аль-Хорезми"],"last":"","note":"","explain":"«Канон врачебной науки» Ибн Сины (XI в.) несколько столетий был главным учебником медицины в университетах Востока и Европы.","disputed":false},{"n":"t7-2","topic":7,"q":"Какое почётное прозвище получил аль-Фараби на мусульманском Востоке?","correct":"«Второй учитель»","wrong":["«Первый учитель»","«Отец истории»","«Глава учёных»"],"last":"","note":"","explain":"«Первым учителем» считали Аристотеля, а аль-Фараби, глубоко прокомментировавшего его труды, назвали «Вторым учителем» (аль-Муаллим ас-Сани).","disputed":false},{"n":"t7-3","topic":7,"q":"От имени какого средневекового учёного-математика происходит слово «алгоритм»?","correct":"Мухаммада аль-Хорезми","wrong":["Абу Рейхана Бируни","Улугбека","Джамшида аль-Каши"],"last":"","note":"","explain":"Латинская форма имени аль-Хорезми — Algoritmi — дала слово «алгоритм», а слово «аль-джабр» из названия его трактата — слово «алгебра».","disputed":false},{"n":"t7-4","topic":7,"q":"Учёный-энциклопедист, автор труда «Индия», посвящённого религии, науке и обычаям индийцев:","correct":"Абу Рейхан Бируни","wrong":["Аль-Фараби","Абу Али ибн Сина","Махмуд Кашгари"],"last":"","note":"","explain":"Бируни побывал в Индии вместе с походами Махмуда Газневи, изучил санскрит и около 1030 г. написал «Индию» — ценнейший источник по индийской культуре.","disputed":false},{"n":"t7-5","topic":7,"q":"Кто ввёл в науку термин «Шёлковый путь»?","correct":"Фердинанд фон Рихтгофен","wrong":["Александр фон Гумбольдт","Марко Поло","Николай Пржевальский"],"last":"","note":"","explain":"Немецкий географ Фердинанд фон Рихтгофен ввёл в научный оборот термин «Шёлковый путь» (Seidenstraße) в 1877 г. в своём труде о Китае.","disputed":false},{"n":"t8-1","topic":8,"q":"Автор труда «Диван лугат ат-тюрк» («Сборник тюркских наречий»):","correct":"Махмуд Кашгари","wrong":["Юсуф Баласагуни","Ахмед Югнеки","Ходжа Ахмед Яссауи"],"last":"","note":"","explain":"Махмуд Кашгари написал «Диван лугат ат-тюрк» в 1070-х гг. в Багдаде: в нём собраны слова, пословицы и стихи тюркских племён и помещена карта тюркского мира.","disputed":false},{"n":"t8-2","topic":8,"q":"Поэма «Кутадгу билиг» («Благодатное знание») написана:","correct":"Юсуфом Баласагуни","wrong":["Махмудом Кашгари","Ахмедом Югнеки","Сулейманом Бакыргани"],"last":"","note":"","explain":"Юсуф из Баласагуна завершил поэму в 1069–1070 гг. и преподнёс её караханидскому правителю; это наставление о справедливом управлении и пути к счастью.","disputed":false},{"n":"t8-3","topic":8,"q":"Главное поэтическое произведение Ходжи Ахмеда Яссауи:","correct":"«Диуани хикмет» («Книга мудрости»)","wrong":["«Кутадгу билиг» («Благодатное знание»)","«Хибат ал-хакайык» («Дар истины»)","«Мантик ат-тайр» («Беседа птиц»)"],"last":"","note":"","explain":"Хикметы Яссауи — стихи-наставления о суфийском пути на понятном тюркском языке; они сделали учение ислама доступным кочевникам степи.","disputed":false},{"n":"t8-4","topic":8,"q":"В каком городе Улугбек построил знаменитую обсерваторию, где был составлен «Гурганский зидж»?","correct":"В Самарканде","wrong":["В Бухаре","В Шахрисабзе","В Герате"],"last":"","note":"","explain":"Обсерватория Улугбека в Самарканде (1420-е гг.) с гигантским секстантом позволила составить «Гурганский зидж» — каталог более тысячи звёзд.","disputed":false},{"n":"t8-5","topic":8,"q":"Великий тюркский поэт XV века, сыгравший главную роль в развитии литературного чагатайского языка:","correct":"Алишер Навои","wrong":["Нуриддин Джами","Камолиддин Бехзад","Фарид ад-Дин Аттар"],"last":"","note":"","explain":"Алишер Навои (1441–1501) писал в основном на чагатайском языке и в трактате «Суждение о двух языках» доказывал его богатство в сравнении с персидским.","disputed":false},{"n":"t9-1","topic":9,"q":"Двухструнный щипковый музыкальный инструмент, главный инструмент казахских акынов и кюйши, — это","correct":"Домбра","wrong":["Кобыз","Жетыген","Сыбызгы"],"last":"","note":"","explain":"Домбра — двухструнный щипковый инструмент, на котором исполняют кюи, а также сопровождают песни и айтыс. Кобыз — смычковый, жетыген — семиструнный, сыбызгы — духовой.","disputed":false},{"n":"t9-2","topic":9,"q":"Какой жырау был советником и соратником хана Абылая?","correct":"Бухар жырау","wrong":["Асан Кайгы","Казтуган жырау","Доспамбет жырау"],"last":"","note":"","explain":"Бухар жырау Калкаманулы (XVIII в.) был ближайшим советником Абылай хана. Асан Кайгы, Казтуган и Доспамбет жили намного раньше, в XV–XVI вв.","disputed":false},{"n":"t9-3","topic":9,"q":"Кто из трёх великих казахских биев представлял Младший жуз?","correct":"Айтеке би","wrong":["Толе би","Казыбек би","Майкы би"],"last":"","note":"","explain":"Три великих бия XVII–XVIII вв.: Толе би представлял Старший жуз, Казыбек би — Средний, Айтеке би — Младший. Майкы би — легендарный бий более ранней эпохи.","disputed":false},{"n":"t9-4","topic":9,"q":"Как называется свадебный обряд, во время которого под особую песню-назидание открывают лицо невесты?","correct":"Беташар","wrong":["Тусау кесер","Шилдехана","Кыз узату"],"last":"","note":"","explain":"«Беташар» означает «открытие лица». Обряд проходит в доме жениха: акын поёт назидание и представляет невесту родне мужа. Тусау кесер и шилдехана связаны с ребёнком, кыз узату — проводы невесты.","disputed":false},{"n":"t9-5","topic":9,"q":"Поселение эпохи энеолита в Северном Казахстане, с которым учёные связывают одни из древнейших свидетельств приручения лошади, — это","correct":"Ботай","wrong":["Сарайшык","Бозок","Отрар"],"last":"","note":"","explain":"Ботайская культура (IV тыс. до н. э.) известна огромным количеством конских костей и ранними следами коневодства. Сарайшык, Бозок и Отрар — средневековые города. Ботай входит в проект музеев-заповедников.","disputed":false},{"n":"t10-1","topic":10,"q":"В какой город Восточного Туркестана Ч. Валиханов совершил секретную экспедицию в 1858–1859 гг.?","correct":"Кашгар","wrong":["Хотан","Турфан","Яркенд"],"last":"","note":"","explain":"Валиханов побывал в Кашгаре под видом купца. По итогам поездки он написал труд «О состоянии Алтышара…» — классическое описание Кашгарии.","disputed":false},{"n":"t10-2","topic":10,"q":"Как называется цикл философско-нравственных прозаических размышлений Абая Кунанбаева?","correct":"«Қара сөздер» («Слова назидания»)","wrong":["«Қырық мысал»","«Оян, қазақ!»","«Киргизская хрестоматия»"],"last":"","note":"","explain":"«Слова назидания» — 45 коротких прозаических размышлений Абая о нравственности, знании и судьбе народа. «Қырық мысал» — басни Байтурсынова, «Оян, қазақ!» — стихи Дулатова, хрестоматия — учебник Алтынсарина.","disputed":false},{"n":"t10-3","topic":10,"q":"Кто из педагогов-просветителей составил «Киргизскую хрестоматию» (1879) и открыл в Тургае школу для казахских детей?","correct":"Ибрай Алтынсарин","wrong":["Чокан Валиханов","Абай Кунанбаев","Шакарим Кудайбердиев"],"last":"","note":"","explain":"В 1864 г. Ибрай Алтынсарин открыл в Тургае школу для казахских детей. Он создавал русско-казахские школы и составил «Киргизскую хрестоматию» — книгу для чтения на казахском языке.","disputed":false},{"n":"t10-4","topic":10,"q":"Кюйши Сарыарки, мастер исполнительского стиля шертпе, автор кюя «Сарыжайлау», — это","correct":"Таттимбет","wrong":["Курмангазы","Даулеткерей","Дина Нурпеисова"],"last":"","note":"","explain":"Таттимбет Казангапулы (XIX в.) — представитель центральноказахстанской школы шертпе. Курмангазы, Даулеткерей и Дина Нурпеисова принадлежат к западной школе токпе.","disputed":false},{"n":"t10-5","topic":10,"q":"Кто был лидером партии «Алаш» и председателем правительства Алаш-Орды (1917)?","correct":"Алихан Букейханов","wrong":["Ахмет Байтурсынов","Миржакып Дулатов","Турар Рыскулов"],"last":"","note":"","explain":"Автономное правительство Алаш-Орда было образовано на Втором всеказахском съезде в декабре 1917 г. Его председателем избрали Алихана Букейханова.","disputed":false},{"n":"t11-1","topic":11,"q":"Геолог, исследователь Жезказганского месторождения меди, первый президент Академии наук Казахской ССР (1946), — это","correct":"Каныш Сатпаев","wrong":["Алькей Маргулан","Мухтар Ауэзов","Евней Букетов"],"last":"","note":"","explain":"Каныш Сатпаев доказал промышленное значение Жезказганских медных руд. В 1946 г. он возглавил только что созданную Академию наук КазССР.","disputed":false},{"n":"t11-2","topic":11,"q":"Кто написал роман-эпопею «Путь Абая»?","correct":"Мухтар Ауэзов","wrong":["Сабит Муканов","Габит Мусрепов","Ильяс Есенберлин"],"last":"","note":"","explain":"Мухтар Ауэзов посвятил жизни Абая четырёхтомную эпопею «Путь Абая». За неё писатель получил Ленинскую премию в 1959 г.","disputed":false},{"n":"t11-3","topic":11,"q":"Основоположник казахской профессиональной живописи, чьё имя носит Государственный музей искусств Республики Казахстан в Алматы, — это","correct":"Абылхан Кастеев","wrong":["Салихитдин Айтбаев","Канафия Тельжанов","Евгений Сидоркин"],"last":"","note":"","explain":"Абылхан Кастеев (1904–1973) считается первым профессиональным казахским художником. В его честь назван главный художественный музей Алматы.","disputed":false},{"n":"t11-4","topic":11,"q":"Оперная певица, первая исполнительница партии Жибек в опере Е. Брусиловского «Кыз Жибек», народная артистка СССР (1936), — это","correct":"Куляш Байсеитова","wrong":["Бибигуль Тулегенова","Роза Багланова","Роза Джаманова"],"last":"","note":"","explain":"Куляш Байсеитова спела партию Жибек в первой казахской опере (1934). В 24 года, после Декады казахского искусства в Москве, она стала народной артисткой СССР.","disputed":false},{"n":"t11-5","topic":11,"q":"Чьё имя носит киностудия «Казахфильм»?","correct":"Шакена Айманова","wrong":["Мажита Бегалина","Султана Ходжикова","Абдуллы Карсакбаева"],"last":"","note":"","explain":"Шакен Айманов — режиссёр и актёр, классик казахского кино, снявший фильмы «Земля отцов» и «Конец атамана». Киностудия названа в его честь.","disputed":false},{"n":"t12-1","topic":12,"q":"Какой из этих международных кинофестивалей проводится в Казахстане?","correct":"«Евразия»","wrong":["«Кинотавр»","«Золотой абрикос»","«Листопад»"],"last":"","note":"","explain":"«Евразия» — крупнейший международный кинофестиваль Казахстана. Остальные проходят в других странах: «Кинотавр» — в России, «Золотой абрикос» — в Армении, «Листопад» — в Беларуси.","disputed":false},{"n":"t12-2","topic":12,"q":"Какой фильм С. Дворцевого получил главный приз программы «Особый взгляд» Каннского кинофестиваля в 2008 г.?","correct":"«Тюльпан»","wrong":["«Кочевник»","«Келин»","«Мустафа Шокай»"],"last":"","note":"","explain":"«Тюльпан» рассказывает о парне, который после службы на флоте вернулся в казахскую степь и мечтает стать чабаном. Каннский приз сделал фильм одним из самых известных за рубежом казахстанских фильмов.","disputed":false},{"n":"t12-3","topic":12,"q":"Международная организация тюркской культуры, учреждённая в 1993 г. в Алматы, — это","correct":"ТЮРКСОЙ","wrong":["ЮНЕСКО","ИСЕСКО","ШОС"],"last":"","note":"","explain":"ТЮРКСОЙ объединяет министерства культуры тюркоязычных стран, сохраняет и популяризирует общее тюркское наследие. Штаб-квартира организации находится в Анкаре.","disputed":false},{"n":"t12-4","topic":12,"q":"Кто из казахстанских певцов получил мировую известность после участия в китайском телешоу «Singer» в 2017 г.?","correct":"Димаш Кудайберген","wrong":["Батырхан Шукенов","Кайрат Нуртас","Ерке Есмахан"],"last":"","note":"","explain":"Выступления в шоу «Singer» сделали Димаша одним из самых известных за рубежом исполнителей Казахстана. Он соединяет академический вокал с эстрадой.","disputed":false},{"n":"t12-5","topic":12,"q":"О юности какого исторического деятеля рассказывает казахстанский фильм «Кочевник» (2005)?","correct":"Хана Абылая","wrong":["Хана Кенесары","Хана Абулхаира","Хана Касыма"],"last":"","note":"","explain":"Главный герой «Кочевника» — юный Мансур, будущий хан Абылай, который объединяет казахов в борьбе с джунгарами.","disputed":false},{"n":"t13-1","topic":13,"q":"Средневековый город на реке Жайык (Урал), где находится некрополь золотоордынских и казахских ханов, — это","correct":"Сарайшык","wrong":["Отрар","Сыгнак","Бозок"],"last":"","note":"","explain":"Сарайшык в Атырауской области — город Золотой и Ногайской Орды. По преданию, здесь похоронен Касым хан. Сейчас здесь историко-культурный музей-заповедник.","disputed":false},{"n":"t13-2","topic":13,"q":"Подземная мечеть-святыня на Мангышлаке, названная в честь суфия и просветителя, место массового паломничества, — это","correct":"Бекет-Ата","wrong":["Арыстан-баб","Айша-биби","Карахан"],"last":"","note":"","explain":"Бекет-Ата Мырзагулулы (1750–1813) — суфий и просветитель. Его подземная мечеть и некрополь в урочище Огланды — одна из главных святынь Казахстана.","disputed":false},{"n":"t13-3","topic":13,"q":"Какой заповедник, основанный в 1926 г. в Западном Тянь-Шане, — старейший в Центральной Азии?","correct":"Аксу-Жабаглы","wrong":["Коргалжынский","Наурзумский","Алматинский"],"last":"","note":"","explain":"Аксу-Жабаглы знаменит тюльпанами Грейга и петроглифами. С 2016 г. он входит в объект всемирного наследия ЮНЕСКО «Западный Тянь-Шань».","disputed":false},{"n":"t13-4","topic":13,"q":"Монумент «Байтерек» в Астане воплощает легенду о священной птице, которая отложила золотое яйцо на древе жизни. Как зовут эту птицу?","correct":"Самрук","wrong":["Тулпар","Беркут","Акку"],"last":"","note":"","explain":"По легенде, птица счастья Самрук откладывает золотое яйцо (солнце) на вершине древа жизни Байтерек. Монумент стал символом новой столицы.","disputed":false},{"n":"t13-5","topic":13,"q":"Какой государственный праздник отмечается в Казахстане 1 мая?","correct":"День единства народа Казахстана","wrong":["День Конституции","День Независимости","День столицы"],"last":"","note":"","explain":"1 мая празднуют дружбу и согласие всех этносов страны. Другие даты: День Конституции — 30 августа, День Независимости — 16 декабря, День столицы — 6 июля.","disputed":false},{"n":"t14-1","topic":14,"q":"В каком году принят действующий Закон Республики Казахстан «О культуре», определяющий основы государственной культурной политики?","correct":"В 2006 году","wrong":["В 1993 году","В 2001 году","В 2015 году"],"last":"","note":"","explain":"Закон РК «О культуре» от 15 декабря 2006 г. определяет правовые, экономические, социальные и организационные основы государственной политики в области культуры.","disputed":false},{"n":"t14-2","topic":14,"q":"Как переводится название национальной идеи «Мәңгілік Ел»?","correct":"«Вечная страна»","wrong":["«Великая степь»","«Родная земля»","«Духовное обновление»"],"last":"","note":"","explain":"«Мәңгілік» значит «вечный», «ел» — «страна, народ». Идея выражает стремление к вечному, независимому существованию казахстанского государства и народа.","disputed":false},{"n":"t14-3","topic":14,"q":"В каком году была создана Ассамблея народа Казахстана (первоначально — Ассамблея народов Казахстана)?","correct":"В 1995 году","wrong":["В 1991 году","В 1999 году","В 2002 году"],"last":"","note":"","explain":"Ассамблея создана указом Президента 1 марта 1995 г. для укрепления межэтнического согласия. День её создания отмечается как День благодарности.","disputed":false},{"n":"t14-4","topic":14,"q":"Какая программа была выдвинута в статье Н. Назарбаева «Взгляд в будущее: модернизация общественного сознания» (2017)?","correct":"«Рухани жаңғыру»","wrong":["«Мәдени мұра»","«Народ в потоке истории»","«Нұрлы жол»"],"last":"","note":"","explain":"«Рухани жаңғыру» значит «Духовное обновление». В программу вошли проекты «Туған жер», «Сакральная география Казахстана», «100 новых лиц» и переход алфавита на латиницу.","disputed":false},{"n":"t14-5","topic":14,"q":"Что из перечисленного названо среди основных направлений модернизации общественного сознания в Казахстане?","correct":"Культ знания","wrong":["Изоляционизм","Патернализм","Радикализм"],"last":"","note":"","explain":"В статье 2017 г. названы шесть направлений: конкурентоспособность, прагматизм, сохранение национальной идентичности, культ знания, эволюционное развитие и открытость сознания.","disputed":false},{"n":"t15-1","topic":15,"q":"Какой памятник первым из объектов Казахстана был включён в Список всемирного наследия ЮНЕСКО (2003)?","correct":"Мавзолей Ходжи Ахмеда Яссауи","wrong":["Петроглифы Тамгалы","Городище Отрар","Некрополь Сарайшык"],"last":"","note":"","explain":"Мавзолей в Туркестане построен по приказу Тимура в конце XIV в. и внесён в список ЮНЕСКО в 2003 г. Петроглифы Тамгалы попали в список годом позже, в 2004 г.","disputed":false},{"n":"t15-2","topic":15,"q":"В какой объект всемирного природного наследия ЮНЕСКО (2008) входят Коргалжынский и Наурзумский заповедники?","correct":"«Сарыарка — степи и озёра Северного Казахстана»","wrong":["«Западный Тянь-Шань»","«Шёлковый путь: коридор Чанъань — Тянь-Шань»","«Золотые горы Алтая»"],"last":"","note":"","explain":"«Сарыарка» — первый природный объект Казахстана в списке ЮНЕСКО. На озере Тенгиз в Коргалжынском заповеднике находится самое северное место гнездования фламинго.","disputed":false},{"n":"t15-3","topic":15,"q":"Как называется стотомная серия образцов казахского фольклора, изданная в рамках программы «Мәдени мұра» («Культурное наследие»)?","correct":"«Бабалар сөзі»","wrong":["«Жеті жарғы»","«Кутадгу билиг»","«Айқап»"],"last":"","note":"","explain":"«Бабалар сөзі» («Слово предков») собрала эпосы, сказки, обрядовую поэзию и айтысы. Программа «Мәдени мұра» включала также реставрацию памятников и археологические исследования.","disputed":false},{"n":"t15-4","topic":15,"q":"Как называется проект программы «Рухани жаңғыру», направленный на развитие краеведения и поддержку «малой родины»?","correct":"«Туған жер»","wrong":["«Сакральная география Казахстана»","«100 новых лиц Казахстана»","«Новое гуманитарное знание»"],"last":"","note":"","explain":"«Туған жер» значит «Родная земля» (в силлабусе проект назван «Туған ел»). Он поддерживает краеведение и помощь выходцев из сёл и городов своей малой родине.","disputed":false},{"n":"t15-5","topic":15,"q":"Что было главной задачей проекта «Сакральная география Казахстана»?","correct":"Составление перечня и карты святынь и памятных мест страны","wrong":["Перевод 100 учебников по гуманитарным наукам на казахский язык","Перевод казахского алфавита на латинскую графику","Рассказ о 100 современниках, добившихся успеха"],"last":"","note":"","explain":"Проект выделил святыни общенационального и регионального значения (Туркестан, Улытау, Бекет-Ата и др.) и объединил их в «пояс святынь» для изучения и культурного туризма.","disputed":false}]}</script>
+<script>
+(function(){
+'use strict';
+
+/* ---------- data ---------- */
+var DATA = JSON.parse(document.getElementById('qdata').textContent);
+var TOPICS = {
+  0:'Мировая культура и религии',
+  1:'Морфология культуры',
+  2:'Язык культуры',
+  3:'Семиотика культуры',
+  4:'Анатомия культуры',
+  5:'Культура номадов Казахстана',
+  6:'Культурное наследие прототюрков',
+  7:'Средневековая культура Центральной Азии',
+  8:'Культурное наследие тюрков',
+  9:'Формирование казахской культуры',
+  10:'Казахская культура XVIII – XIX вв.',
+  11:'Казахская культура XX века',
+  12:'Казахская культура и мировые процессы',
+  13:'Казахская культура и глобализация',
+  14:'Культурная политика Казахстана',
+  15:'Программа «Культурное наследие»'
+};
+var LET = ['A','B','C','D'];
+var SCALE = [[95,'A','Отлично'],[90,'A−','Отлично'],[85,'B+','Хорошо'],[80,'B','Хорошо'],[75,'B−','Хорошо'],[70,'C+','Хорошо'],[65,'C','Удовлетворительно'],[60,'C−','Удовлетворительно'],[55,'D+','Удовлетворительно'],[50,'D','Удовлетворительно'],[25,'FX','Неудовлетворительно'],[0,'F','Неудовлетворительно']];
+
+var Q = [], BY = {};
+DATA.bank.forEach(function(q){ var o = Object.assign({}, q, {id:'b'+q.n, src:'bank'}); Q.push(o); BY[o.id]=o; });
+DATA.extra.forEach(function(q){ var o = Object.assign({}, q, {id:'x'+q.n, src:'extra'}); Q.push(o); BY[o.id]=o; });
+
+/* ---------- storage (optional; app works without it) ---------- */
+var KEY = 'kulturologiya-trainer-v1';
+var st = {stats:{}, settings:{}, exams:[], theme:null};
+try { var raw = localStorage.getItem(KEY); if (raw) { var o = JSON.parse(raw); if (o && typeof o === 'object') st = Object.assign(st, o); } } catch(e) {}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(st)); } catch(e) {} }
+var cfg = Object.assign({set:'bank', topic:'all', count:'25', order:'random'}, st.settings || {});
+function saveCfg(){ st.settings = cfg; save(); }
+
+function record(id, ok){
+  var s = st.stats[id] || (st.stats[id] = {c:0, w:0, last:null});
+  if (ok) s.c++; else s.w++;
+  s.last = ok ? 1 : 0;
+}
+function mistakeIds(){ return Q.filter(function(q){ var s = st.stats[q.id]; return s && s.last === 0; }).map(function(q){ return q.id; }); }
+function learnedCount(list){ return list.filter(function(q){ var s = st.stats[q.id]; return s && s.last === 1; }).length; }
+
+/* ---------- theme ---------- */
+function applyTheme(){
+  if (st.theme) document.documentElement.setAttribute('data-theme', st.theme);
+  else document.documentElement.removeAttribute('data-theme');
+}
+function effectiveTheme(){
+  if (st.theme) return st.theme;
+  try { return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; } catch(e) { return 'light'; }
+}
+applyTheme();
+
+/* ---------- helpers ---------- */
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function rnd(n){ return Math.floor(Math.random() * n); }
+function shuffle(a){ for (var i = a.length - 1; i > 0; i--) { var j = rnd(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function plural(n, one, few, many){ var m10 = n % 10, m100 = n % 100; if (m10 === 1 && m100 !== 11) return one; if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few; return many; }
+function grade(p){ for (var i = 0; i < SCALE.length; i++) if (p >= SCALE[i][0]) return SCALE[i]; return SCALE[SCALE.length-1]; }
+function fmtTime(ms){ var s = Math.max(0, Math.round(ms/1000)), m = Math.floor(s/60); s = s % 60; return m + ':' + (s < 10 ? '0' : '') + s; }
+function qLabel(q){ return q.src === 'bank' ? 'Банк экзамена · №' + q.n : 'Дополнительный · по лекции'; }
+
+/* ---------- balanced answer positions ----------
+   In the syllabus every correct answer is option A.
+   Here each session gets its own layout: correct answers are spread
+   evenly over A–D (counts differ by at most 1), never 3 in a row
+   at the same letter, and wrong options are shuffled around them.
+   Catch-all options ("все варианты верны", "нет правильного ответа")
+   are kept last, as is customary in tests. */
+function pinnedCorrect(q){ return !!q.last && q.last === q.correct; }
+function pinnedWrong(q){ return !!q.last && q.last !== q.correct; }
+function assignPositions(qs){
+  var N = qs.length, i, p, k;
+  var fixedD = [], noD = [], free = [];
+  qs.forEach(function(q, idx){ (pinnedCorrect(q) ? fixedD : pinnedWrong(q) ? noD : free).push(idx); });
+  // exact target counts per letter (differ by at most 1)
+  var base = Math.floor(N/4), cnt = [base, base, base, base];
+  shuffle([0,1,2,3]).slice(0, N % 4).forEach(function(x){ cnt[x]++; });
+  for (p = 0; p < 3 && cnt[3] < fixedD.length; p++) while (cnt[p] > 0 && cnt[3] < fixedD.length) { cnt[p]--; cnt[3]++; }
+  while (cnt[0] + cnt[1] + cnt[2] < noD.length && cnt[3] > fixedD.length) {
+    var m = cnt[0] <= cnt[1] && cnt[0] <= cnt[2] ? 0 : (cnt[1] <= cnt[2] ? 1 : 2); cnt[3]--; cnt[m]++;
+  }
+  var pos = new Array(N), nonD = [], dOnly = [];
+  fixedD.forEach(function(idx){ pos[idx] = 3; });
+  for (p = 0; p < 3; p++) for (k = 0; k < cnt[p]; k++) nonD.push(p);
+  for (k = 0; k < cnt[3] - fixedD.length; k++) dOnly.push(3);
+  shuffle(nonD);
+  noD.forEach(function(idx){ pos[idx] = nonD.length ? nonD.pop() : rnd(3); });
+  var rest = shuffle(nonD.concat(dOnly));
+  free.forEach(function(idx){ pos[idx] = rest.length ? rest.pop() : rnd(4); });
+  // repair: no letter correct 3+ times in a row (swaps keep the counts exact)
+  function can(idx, val){ return !pinnedCorrect(qs[idx]) && !(val === 3 && pinnedWrong(qs[idx])); }
+  function inRun(idx){ var v = pos[idx], a = idx, b = idx; while (a > 0 && pos[a-1] === v) a--; while (b < N-1 && pos[b+1] === v) b++; return b - a >= 2; }
+  for (var iter = 0; iter < 400; iter++) {
+    var bad = -1;
+    for (i = 2; i < N && bad < 0; i++) if (pos[i] === pos[i-1] && pos[i] === pos[i-2]) {
+      [i, i-1, i-2].forEach(function(x){ if (bad < 0 && !pinnedCorrect(qs[x])) bad = x; });
+    }
+    if (bad < 0) break;
+    var order = shuffle(qs.map(function(_, x){ return x; })), fixed = false;
+    for (k = 0; k < N && !fixed; k++) {
+      var j = order[k], a = pos[bad], b = pos[j];
+      if (a === b || !can(bad, b) || !can(j, a)) continue;
+      pos[bad] = b; pos[j] = a;
+      if (!inRun(bad) && !inRun(j)) fixed = true; else { pos[bad] = a; pos[j] = b; }
+    }
+    if (!fixed) break;
+  }
+  return pos;
+}
+function buildOptions(q, pos){
+  var opts = [null, null, null, null], wrong = q.wrong.slice();
+  opts[pos] = q.correct;
+  if (pinnedWrong(q)) { wrong = wrong.filter(function(w){ return w !== q.last; }); opts[3] = q.last; }
+  shuffle(wrong);
+  for (var i = 0; i < 4; i++) if (opts[i] === null) opts[i] = wrong.shift();
+  return opts;
+}
+
+/* ---------- state ---------- */
+var view = 'home', S = null, listQuery = '', timerId = null;
+
+/* Save an unfinished session, so closing a tab or refreshing does not erase work. */
+function snapshot(){
+  if (!S || (view !== 'quiz' && view !== 'cards')) return;
+  st.session = {view:view, mode:S.mode, i:S.i, t0:S.t0, title:S.title,
+    items:S.items.map(function(it){ return {
+      id:it.q.id, opts:it.opts || null, ci:it.ci, chosen:it.chosen,
+      flipped:!!it.flipped, res:it.res
+    }; })};
+  save();
+}
+function restoreSession(){
+  var d = st.session;
+  if (!d || !Array.isArray(d.items) || !d.items.length || !['quiz','cards'].includes(d.view)) return false;
+  try {
+    var items = d.items.map(function(it){
+      if (!BY[it.id]) throw new Error('Question missing');
+      if (d.view === 'quiz' && (!Array.isArray(it.opts) || it.opts.length !== 4 || it.opts[it.ci] !== BY[it.id].correct)) throw new Error('Invalid options');
+      return Object.assign({}, it, {q:BY[it.id]});
+    });
+    if (!Number.isInteger(d.i) || d.i < 0 || d.i >= items.length) throw new Error('Invalid position');
+    S = {mode:d.mode, i:d.i, t0:d.t0 || Date.now(), t1:null, title:d.title || '', items:items};
+    view = d.view;
+    return true;
+  } catch(e) { st.session = null; save(); return false; }
+}
+function discardSession(){ st.session = null; save(); }
+restoreSession();
+
+function currentPool(){
+  return Q.filter(function(q){
+    return (cfg.set === 'all' || q.src === cfg.set) && (cfg.topic === 'all' || String(q.topic) === cfg.topic);
+  });
+}
+function pickIds(list, forceAll){
+  var ids = list.map(function(q){ return q.id; });
+  if (cfg.order === 'random') shuffle(ids);
+  var n = (forceAll || cfg.count === 'all') ? ids.length : Math.min(ids.length, +cfg.count);
+  return ids.slice(0, n);
+}
+function start(mode, ids, opts){
+  opts = opts || {};
+  if (!ids.length) return;
+  var qs = ids.map(function(id){ return BY[id]; });
+  if (mode === 'cards') {
+    S = {mode:'cards', i:0, items: qs.map(function(q){ return {q:q, flipped:false, res:null}; }), title: opts.title || ''};
+    view = 'cards';
+  } else {
+    var pos = assignPositions(qs);
+    S = {mode:mode, i:0, t0:Date.now(), t1:null, title: opts.title || '',
+         items: qs.map(function(q, k){ return {q:q, opts:buildOptions(q, pos[k]), ci:pos[k], chosen:null}; })};
+    view = 'quiz';
+  }
+  render(); window.scrollTo(0,0);
+}
+
+/* ---------- views ---------- */
+function seg(name, value, items){
+  return '<div class="seg" role="group">' + items.map(function(it){
+    return '<button type="button" data-act="cfg" data-k="' + name + '" data-v="' + esc(it[0]) + '" aria-pressed="' + (String(value) === String(it[0])) + '">' + esc(it[1]) + '</button>';
+  }).join('') + '</div>';
+}
+function topicSelect(){
+  var base = Q.filter(function(q){ return cfg.set === 'all' || q.src === cfg.set; });
+  var counts = {}; base.forEach(function(q){ counts[q.topic] = (counts[q.topic] || 0) + 1; });
+  var html = '<select id="topicSel" aria-label="Тема"><option value="all">Все темы (' + base.length + ')</option>';
+  Object.keys(TOPICS).forEach(function(k){
+    if (!counts[k]) return;
+    html += '<option value="' + k + '"' + (cfg.topic === k ? ' selected' : '') + '>' + (k === '0' ? '' : k + '. ') + esc(TOPICS[k]) + ' (' + counts[k] + ')</option>';
+  });
+  return html + '</select>';
+}
+
+function viewHome(){
+  var bank = Q.filter(function(q){ return q.src === 'bank'; });
+  var pool = currentPool(), mist = mistakeIds();
+  if (cfg.topic !== 'all' && !pool.length) { cfg.topic = 'all'; pool = currentPool(); }
+  var learned = learnedCount(Q), lastExam = st.exams && st.exams.length ? st.exams[st.exams.length-1] : null;
+  var nSession = cfg.count === 'all' ? pool.length : Math.min(pool.length, +cfg.count);
+  return '' +
+  '<h1>Подготовка к экзамену</h1>' +
+  '<p class="lead">Итоговое компьютерное тестирование по силлабусу «Культурология» (2025). Все ' + bank.length + ' вопросов экзаменационного банка из силлабуса и ' + DATA.extra.length + ' дополнительных по 15 темам лекций.</p>' +
+  '<div class="stats">' +
+    '<div class="stat"><b>' + bank.length + '</b><small>вопросов банка</small></div>' +
+    '<div class="stat"><b>' + DATA.extra.length + '</b><small>дополнительных</small></div>' +
+    '<div class="stat"><b>' + learned + '<span class="muted" style="font-size:14px;font-weight:500"> / ' + Q.length + '</span></b><small>отвечено верно</small></div>' +
+    '<div class="stat"><b>' + (lastExam ? lastExam.pct + '%' : '—') + '</b><small>' + (lastExam ? 'последний экзамен · ' + esc(lastExam.grade) : 'экзамен не сдавался') + '</small></div>' +
+  '</div>' +
+  '<div class="progress" style="margin-top:12px" aria-label="Прогресс"><i style="width:' + (Q.length ? Math.round(learned / Q.length * 100) : 0) + '%"></i></div>' +
+
+  '<div class="card" style="margin-top:20px">' +
+    '<h2>Что повторяем</h2>' +
+    '<div class="settings">' +
+      '<div class="field"><span class="label">Набор вопросов</span>' + seg('set', cfg.set, [['bank','Банк'],['extra','Дополнительные'],['all','Все']]) + '</div>' +
+      '<div class="field"><label for="topicSel">Тема лекции</label>' + topicSelect() + '</div>' +
+      '<div class="field"><span class="label">Сколько вопросов за раз</span>' + seg('count', cfg.count, [['10','10'],['25','25'],['50','50'],['all','Все']]) + '</div>' +
+      '<div class="field"><span class="label">Порядок</span>' + seg('order', cfg.order, [['random','Случайный'],['seq','По номерам']]) + '</div>' +
+    '</div>' +
+    '<p class="small muted" style="margin:14px 0 0">Подходит ' + pool.length + ' ' + plural(pool.length,'вопрос','вопроса','вопросов') + ', в сессии будет ' + nSession + '.</p>' +
+  '</div>' +
+
+  (st.session ? '<div class="actions"><button class="btn" data-act="resume">Продолжить незавершённую сессию</button><button class="btn ghost" data-act="discard">Начать заново</button></div>' : '') +
+  '<div class="modes" style="margin-top:16px">' +
+    '<button class="mode primary" data-act="start" data-mode="practice"' + (pool.length ? '' : ' disabled') + '><b>Тренировка</b><small>Ответ и пояснение сразу после каждого вопроса</small></button>' +
+    '<button class="mode" data-act="start" data-mode="exam"' + (pool.length ? '' : ' disabled') + '><b>Пробный экзамен</b><small>Ответы в конце, оценка по шкале силлабуса, таймер</small></button>' +
+    '<button class="mode" data-act="start" data-mode="cards"' + (pool.length ? '' : ' disabled') + '><b>Карточки</b><small>Вопрос → вспомни ответ → переверни карточку</small></button>' +
+    '<button class="mode" data-act="list"><b>Шпаргалка</b><small>Все вопросы с верными ответами и поиском</small></button>' +
+    (mist.length ? '<button class="mode warn" data-act="mistakes" style="grid-column:1/-1"><b>Работа над ошибками · ' + mist.length + '</b><small>Вопросы, на которые последний ответ был неверным. Верный ответ убирает вопрос из списка.</small></button>' : '') +
+  '</div>' +
+
+  '<div class="note" style="margin-top:16px"><b>Почему буквы перемешаны.</b> В силлабусе правильный ответ во всех вопросах стоит под буквой A. В тренажёре варианты перемешиваются заново при каждом запуске: правильные ответы распределяются поровну между A, B, C и D, и одна буква не бывает верной больше двух раз подряд. Запоминай сам ответ, а не его позицию.</div>' +
+  '<p class="hint">Клавиши: <span class="kbd">A</span>–<span class="kbd">D</span> или <span class="kbd">1</span>–<span class="kbd">4</span> выбрать ответ, <span class="kbd">Enter</span> дальше, <span class="kbd">←</span> <span class="kbd">→</span> навигация в экзамене. Прогресс хранится в этом браузере. <button class="linkbtn" data-act="reset">Сбросить прогресс</button></p>';
+}
+
+function optionsHtml(it, mode){
+  var answered = it.chosen !== null, reveal = mode === 'practice' && answered;
+  return '<div class="options" role="list">' + it.opts.map(function(o, i){
+    var cls = 'option';
+    if (reveal) {
+      if (i === it.ci) cls += ' is-correct';
+      else if (i === it.chosen) cls += ' is-wrong';
+      else cls += ' dim';
+    } else if (mode === 'exam' && i === it.chosen) cls += ' is-chosen';
+    return '<button class="' + cls + '" data-act="answer" data-i="' + i + '"' + (reveal ? ' disabled' : '') + '><span class="letter">' + LET[i] + '</span><span class="t">' + esc(o) + '</span></button>';
+  }).join('') + '</div>';
+}
+function chipsHtml(q){
+  return '<div class="chips"><span class="chip">' + esc(qLabel(q)) + '</span><span class="chip">' + (q.topic ? 'Тема ' + q.topic + ': ' : '') + esc(TOPICS[q.topic] || '') + '</span>' +
+    (q.disputed ? '<span class="chip warn" title="Ответ в ключе экзамена может отличаться от учебников — см. пояснение">спорный ключ</span>' : '') + '</div>';
+}
+function explainHtml(q){
+  return (q.explain ? '<div style="margin-top:4px">' + esc(q.explain) + '</div>' : '') +
+         (q.note ? '<div class="small muted" style="margin-top:6px">Примечание: ' + esc(q.note) + '</div>' : '');
+}
+
+function viewQuiz(){
+  var it = S.items[S.i], q = it.q, total = S.items.length, mode = S.mode;
+  var done = S.items.filter(function(x){ return x.chosen !== null; }).length;
+  var html = '<div class="qhead"><span>' + (mode === 'exam' ? 'Пробный экзамен' : 'Тренировка') + (S.title ? ' · ' + esc(S.title) : '') + '</span><span>Вопрос <b>' + (S.i+1) + '</b> из ' + total + '</span></div>' +
+    '<div class="progress"><i style="width:' + Math.round((mode === 'exam' ? done : S.i + (it.chosen !== null ? 1 : 0)) / total * 100) + '%"></i></div>' +
+    '<div class="card" style="margin-top:16px">' + chipsHtml(q) +
+    '<p class="qtext">' + esc(q.q) + '</p>' + optionsHtml(it, mode);
+
+  if (mode === 'practice' && it.chosen !== null) {
+    var ok = it.chosen === it.ci;
+    html += '<div class="feedback ' + (ok ? 'ok' : 'bad') + '" role="status"><div class="h">' + (ok ? 'Верно' : 'Неверно. Правильный ответ: ' + LET[it.ci] + ' — ' + esc(it.opts[it.ci])) + '</div>' + explainHtml(q) + '</div>';
+  }
+  html += '<div class="actions">';
+  if (mode === 'exam') {
+    html += '<button class="btn ghost" data-act="prev"' + (S.i === 0 ? ' disabled' : '') + '>← Назад</button>' +
+            '<button class="btn ghost" data-act="next"' + (S.i === total-1 ? ' disabled' : '') + '>Дальше →</button>' +
+            '<span class="spacer"></span><button class="btn" data-act="finish">Завершить (' + done + '/' + total + ')</button>';
+  } else {
+    html += '<button class="btn ghost" data-act="finish">Завершить</button><span class="spacer"></span>' +
+            '<button class="btn" data-act="next"' + (it.chosen === null ? ' disabled' : '') + '>' + (S.i === total-1 ? 'Итоги' : 'Дальше →') + '</button>';
+  }
+  html += '</div>';
+  if (mode === 'exam') {
+    html += '<div class="navgrid" aria-label="Навигация по вопросам">' + S.items.map(function(x, k){
+      return '<button data-act="goto" data-i="' + k + '" class="' + (x.chosen !== null ? 'done' : '') + (k === S.i ? ' cur' : '') + '" aria-label="Вопрос ' + (k+1) + '">' + (k+1) + '</button>';
+    }).join('') + '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function viewResult(){
+  var items = S.items;
+  var total = items.length, right = items.filter(function(x){ return x.chosen === x.ci; }).length;
+  var pct = total ? Math.round(right / total * 100) : 0, g = grade(pct);
+  var wrong = items.filter(function(x){ return x.chosen !== x.ci; });
+  var dist = [0,0,0,0]; S.items.forEach(function(x){ dist[x.ci]++; });
+  var html = '<h1>' + (S.mode === 'exam' ? 'Результат экзамена' : 'Итоги тренировки') + '</h1>' +
+    '<div class="card"><div class="score">' +
+      '<div class="ring" style="--p:' + pct + '"><div>' + pct + '%</div></div>' +
+      '<div><div class="grade">' + esc(g[1]) + '</div><div class="muted">' + esc(g[2]) + ' · ' + right + ' из ' + total + ' верно' + (S.t1 ? ' · ' + fmtTime(S.t1 - S.t0) : '') + '</div>' +
+      '<div class="dist" title="Где стояли правильные ответы в этой сессии">' + dist.map(function(n, i){ return '<span>' + LET[i] + ': ' + n + '</span>'; }).join('') + '</div>' +
+      '<div class="small muted" style="margin-top:4px">Позиции правильных ответов в этой сессии</div></div>' +
+    '</div>' +
+    '<div class="actions">' +
+      (wrong.length ? '<button class="btn" data-act="redo-wrong">Повторить ошибки (' + wrong.length + ')</button>' : '') +
+      '<button class="btn ghost" data-act="again">Новая сессия</button>' +
+      '<button class="btn ghost" data-act="home">В меню</button>' +
+    '</div></div>';
+  if (wrong.length) {
+    html += '<div class="card" style="margin-top:16px"><h2>Разбор ошибок</h2><ul class="review">' + wrong.map(function(x){
+      var q = x.q;
+      return '<li><div class="small muted">' + esc(qLabel(q)) + '</div><div class="q">' + esc(q.q) + '</div>' +
+        (x.chosen !== null ? '<div class="ans"><span class="tag bad">ваш</span><span>' + esc(x.opts[x.chosen]) + '</span></div>' : '<div class="ans"><span class="tag bad">нет ответа</span><span class="muted">—</span></div>') +
+        '<div class="ans"><span class="tag ok">верно</span><span><b>' + esc(q.correct) + '</b></span></div>' +
+        (q.explain ? '<div class="small muted" style="margin-top:6px">' + esc(q.explain) + '</div>' : '') + '</li>';
+    }).join('') + '</ul></div>';
+  } else if (total) {
+    html += '<div class="note" style="margin-top:16px"><b>Без ошибок.</b> Попробуй больше вопросов или пробный экзамен по всему банку.</div>';
+  }
+  return html;
+}
+
+function viewCards(){
+  var it = S.items[S.i], q = it.q, total = S.items.length;
+  var html = '<div class="qhead"><span>Карточки' + (S.title ? ' · ' + esc(S.title) : '') + '</span><span><b>' + (S.i+1) + '</b> из ' + total + '</span></div>' +
+    '<div class="progress"><i style="width:' + Math.round(S.i / total * 100) + '%"></i></div>' +
+    '<div class="card flash" style="margin-top:16px">' + chipsHtml(q) + '<p class="qtext">' + esc(q.q) + '</p>';
+  if (it.flipped) {
+    html += '<div class="answer"><div class="a">' + esc(q.correct) + '</div>' + '<div class="muted">' + explainHtml(q) + '</div></div>' +
+      '<div class="actions"><button class="btn danger" data-act="card-no">Не помню <span class="kbd">←</span></button><span class="spacer"></span><button class="btn" data-act="card-yes">Помню <span class="kbd" style="background:transparent;color:inherit;border-color:currentColor">→</span></button></div>';
+  } else {
+    html += '<div class="actions"><button class="btn ghost" data-act="home">В меню</button><span class="spacer"></span><button class="btn" data-act="flip">Показать ответ <span class="kbd" style="background:transparent;color:inherit;border-color:currentColor">Пробел</span></button></div>';
+  }
+  return html + '</div>';
+}
+
+function viewCardsDone(){
+  var yes = S.items.filter(function(x){ return x.res === 1; }).length, no = S.items.filter(function(x){ return x.res === 0; });
+  return '<h1>Карточки пройдены</h1><div class="card"><p style="margin:0 0 4px;font-size:18px"><b>' + yes + '</b> помню · <b>' + no.length + '</b> не помню</p>' +
+    '<p class="muted small" style="margin:0">Вопросы с ответом «не помню» попали в «Работу над ошибками».</p>' +
+    '<div class="actions">' + (no.length ? '<button class="btn" data-act="cards-redo">Ещё раз «не помню» (' + no.length + ')</button>' : '') +
+    '<button class="btn ghost" data-act="practice-these">Проверить себя тестом</button><button class="btn ghost" data-act="home">В меню</button></div></div>';
+}
+
+function viewList(){
+  return '<h1>Шпаргалка</h1><p class="lead">Только правильные ответы, без букв: запоминай содержание.</p>' +
+    '<div class="card"><div class="settings">' +
+      '<div class="field"><span class="label">Набор</span>' + seg('set', cfg.set, [['bank','Банк'],['extra','Дополнительные'],['all','Все']]) + '</div>' +
+      '<div class="field"><label for="topicSel">Тема лекции</label>' + topicSelect() + '</div>' +
+    '</div><div style="margin-top:14px"><input type="search" id="search" placeholder="Поиск по вопросам и ответам: Абай, тенгри, 2003…" value="' + esc(listQuery) + '" autocomplete="off"></div></div>' +
+    '<div class="card list" style="margin-top:16px" id="listBox">' + listItems() + '</div>';
+}
+function hl(text, qy){
+  var s = esc(text); if (!qy) return s;
+  var e = esc(qy).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  try { return s.replace(new RegExp('(' + e + ')', 'gi'), '<mark>$1</mark>'); } catch(err) { return s; }
+}
+function listItems(){
+  var qy = listQuery.trim().toLowerCase();
+  var items = currentPool().filter(function(q){
+    if (!qy) return true;
+    return (q.q + ' ' + q.correct + ' ' + (q.explain || '')).toLowerCase().indexOf(qy) !== -1;
+  });
+  if (!items.length) return '<div class="empty">Ничего не найдено</div>';
+  return '<div class="small muted" style="margin-bottom:4px">' + items.length + ' ' + plural(items.length,'вопрос','вопроса','вопросов') + '</div>' + items.map(function(q){
+    return '<div class="item"><div class="num">' + esc(qLabel(q)) + ' · ' + esc(TOPICS[q.topic] || '') + (q.disputed ? ' · <span style="color:var(--warn)">спорный ключ</span>' : '') + '</div>' +
+      '<div class="q">' + hl(q.q, qy) + '</div><div class="a">→ ' + hl(q.correct, qy) + '</div>' +
+      (q.explain ? '<div class="e">' + hl(q.explain, qy) + '</div>' : '') + '</div>';
+  }).join('');
+}
+
+/* ---------- render ---------- */
+function render(){
+  var app = document.getElementById('app'), html;
+  if (view === 'home') html = viewHome();
+  else if (view === 'quiz') html = viewQuiz();
+  else if (view === 'result') html = viewResult();
+  else if (view === 'cards') html = viewCards();
+  else if (view === 'cards-done') html = viewCardsDone();
+  else if (view === 'list') html = viewList();
+  app.innerHTML = html;
+  snapshot();
+  var sel = document.getElementById('topicSel');
+  if (sel) sel.addEventListener('change', function(){ cfg.topic = sel.value; saveCfg(); if (view === 'list') { document.getElementById('listBox').innerHTML = listItems(); } else render(); });
+  var search = document.getElementById('search');
+  if (search) search.addEventListener('input', function(){ listQuery = search.value; document.getElementById('listBox').innerHTML = listItems(); });
+  tick();
+  if (view === 'quiz' && S.mode === 'exam') { if (!timerId) timerId = setInterval(tick, 1000); }
+  else if (timerId) { clearInterval(timerId); timerId = null; }
+}
+function tick(){
+  var el = document.getElementById('timer');
+  el.textContent = (view === 'quiz' && S && S.mode === 'exam') ? '⏱ ' + fmtTime(Date.now() - S.t0) : '';
+}
+
+/* ---------- actions ---------- */
+function finish(){
+  if (S.mode === 'exam') {
+    var unanswered = S.items.filter(function(x){ return x.chosen === null; }).length;
+    if (unanswered && !confirm('Без ответа: ' + unanswered + '. Они будут засчитаны как ошибки. Завершить?')) return;
+    S.items.forEach(function(x){ record(x.q.id, x.chosen === x.ci); });
+    var right = S.items.filter(function(x){ return x.chosen === x.ci; }).length, pct = Math.round(right / S.items.length * 100);
+    st.exams = (st.exams || []).concat([{pct:pct, grade:grade(pct)[1], n:S.items.length, at:new Date().toISOString()}]).slice(-20);
+    save();
+  }
+  S.t1 = Date.now(); discardSession(); view = 'result'; render(); window.scrollTo(0,0);
+}
+function answer(i){
+  var it = S.items[S.i];
+  if (S.mode === 'practice') {
+    if (it.chosen !== null) return;
+    it.chosen = i; record(it.q.id, i === it.ci); save();
+  } else { it.chosen = i; }
+  render();
+}
+function next(){
+  if (view === 'quiz') {
+    var it = S.items[S.i];
+    if (S.mode === 'practice' && it.chosen === null) return;
+    if (S.i < S.items.length - 1) { S.i++; render(); }
+    else if (S.mode === 'practice') finish();
+  }
+}
+function cardMark(ok){
+  var it = S.items[S.i]; it.res = ok ? 1 : 0; record(it.q.id, ok); save();
+  if (S.i < S.items.length - 1) { S.i++; render(); } else { discardSession(); view = 'cards-done'; render(); }
+}
+
+document.addEventListener('click', function(e){
+  var b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
+  var a = b.getAttribute('data-act');
+  if (a === 'home') { if (view === 'quiz' && S && S.mode === 'exam' && !confirm('Выйти из экзамена? Результат не сохранится.')) return; view = 'home'; render(); }
+  else if (a === 'resume') { if (restoreSession()) { render(); window.scrollTo(0,0); } }
+  else if (a === 'discard') { discardSession(); S = null; render(); }
+  else if (a === 'theme') { st.theme = effectiveTheme() === 'dark' ? 'light' : 'dark'; applyTheme(); save(); }
+  else if (a === 'cfg') { cfg[b.getAttribute('data-k')] = b.getAttribute('data-v'); if (b.getAttribute('data-k') === 'set') cfg.topic = 'all'; saveCfg(); render(); }
+  else if (a === 'start') { var m = b.getAttribute('data-mode'); start(m, pickIds(currentPool())); }
+  else if (a === 'mistakes') { var ids = mistakeIds(); shuffle(ids); start('practice', ids, {title:'работа над ошибками'}); }
+  else if (a === 'list') { view = 'list'; render(); window.scrollTo(0,0); }
+  else if (a === 'answer') answer(+b.getAttribute('data-i'));
+  else if (a === 'next') next();
+  else if (a === 'prev') { if (S.i > 0) { S.i--; render(); } }
+  else if (a === 'goto') { S.i = +b.getAttribute('data-i'); render(); }
+  else if (a === 'finish') finish();
+  else if (a === 'redo-wrong') { var w = S.items.filter(function(x){ return x.chosen !== x.ci; }).map(function(x){ return x.q.id; }); shuffle(w); start('practice', w, {title:'ошибки'}); }
+  else if (a === 'again') start(S.mode, pickIds(currentPool()));
+  else if (a === 'flip') { S.items[S.i].flipped = true; render(); }
+  else if (a === 'card-yes') cardMark(true);
+  else if (a === 'card-no') cardMark(false);
+  else if (a === 'cards-redo') { var n = S.items.filter(function(x){ return x.res === 0; }).map(function(x){ return x.q.id; }); shuffle(n); start('cards', n, {title:'повтор'}); }
+  else if (a === 'practice-these') { var p = S.items.map(function(x){ return x.q.id; }); shuffle(p); start('practice', p); }
+  else if (a === 'reset') { if (confirm('Сбросить весь прогресс и историю экзаменов?')) { st.stats = {}; st.exams = []; discardSession(); S = null; save(); render(); } }
+});
+
+document.addEventListener('keydown', function(e){
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  var tag = (e.target && e.target.tagName) || '';
+  if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || tag === 'BUTTON') return;
+  var code = e.code || '';
+  if (view === 'quiz') {
+    var map = {KeyA:0, KeyB:1, KeyC:2, KeyD:3, Digit1:0, Digit2:1, Digit3:2, Digit4:3, Numpad1:0, Numpad2:1, Numpad3:2, Numpad4:3};
+    if (code in map) { e.preventDefault(); answer(map[code]); return; }
+    if (code === 'Enter' || code === 'NumpadEnter') { e.preventDefault(); if (S.mode === 'exam' && S.i === S.items.length - 1) finish(); else next(); return; }
+    if (S.mode === 'exam' && code === 'ArrowRight') { if (S.i < S.items.length - 1) { S.i++; render(); } return; }
+    if (S.mode === 'exam' && code === 'ArrowLeft') { if (S.i > 0) { S.i--; render(); } return; }
+  } else if (view === 'cards') {
+    var it = S.items[S.i];
+    if (!it.flipped && (code === 'Space' || code === 'Enter')) { e.preventDefault(); it.flipped = true; render(); return; }
+    if (it.flipped && code === 'ArrowRight') { cardMark(true); return; }
+    if (it.flipped && code === 'ArrowLeft') { cardMark(false); return; }
+  }
+});
+
+render();
+})();
+</script>
+</body>
+</html>
