@@ -222,6 +222,27 @@ try { var raw = localStorage.getItem(KEY); if (raw) { var o = JSON.parse(raw); i
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(st)); } catch(e) {} }
 var cfg = Object.assign({set:'bank', topic:'all', count:'25', order:'random'}, st.settings || {});
 function saveCfg(){ st.settings = cfg; save(); }
+// Migrate existing answered questions once; subsequent resets keep statistics.
+if (!st.practiceDone || typeof st.practiceDone !== 'object') {
+  st.practiceDone = {};
+  Object.keys(st.stats || {}).forEach(function(id){
+    var entry = st.stats[id];
+    if (entry && (entry.c > 0 || entry.w > 0)) st.practiceDone[id] = true;
+  });
+  save();
+}
+function practicePool(){
+  return currentPool().filter(function(q){ return !st.practiceDone[q.id]; });
+}
+function sessionIds(mode){
+  return pickIds(mode === 'practice' && cfg.order === 'seq' ? practicePool() : currentPool());
+}
+function resetPractice(){
+  if (!confirm('Вернуть все пройденные вопросы в тренировку? Статистика и список ошибок сохранятся.')) return;
+  st.practiceDone = {};
+  if (st.session && st.session.mode === 'practice') st.session = null;
+  S = null; view = 'home'; save(); render();
+}
 
 function record(id, ok){
   var s = st.stats[id] || (st.stats[id] = {c:0, w:0, last:null});
@@ -387,6 +408,8 @@ function viewHome(){
   var bank = Q.filter(function(q){ return q.src === 'bank'; });
   var pool = currentPool(), mist = mistakeIds();
   if (cfg.topic !== 'all' && !pool.length) { cfg.topic = 'all'; pool = currentPool(); }
+  var remaining = cfg.order === 'seq' ? practicePool().length : pool.length;
+  var practiceCount = cfg.count === 'all' ? remaining : Math.min(remaining, +cfg.count);
   var learned = learnedCount(Q), lastExam = st.exams && st.exams.length ? st.exams[st.exams.length-1] : null;
   var nSession = cfg.count === 'all' ? pool.length : Math.min(pool.length, +cfg.count);
   return '' +
@@ -409,11 +432,13 @@ function viewHome(){
       '<div class="field"><span class="label">Порядок</span>' + seg('order', cfg.order, [['random','Случайный'],['seq','По номерам']]) + '</div>' +
     '</div>' +
     '<p class="small muted" style="margin:14px 0 0">Подходит ' + pool.length + ' ' + plural(pool.length,'вопрос','вопроса','вопросов') + ', в сессии будет ' + nSession + '.</p>' +
+    (cfg.order === 'seq' ? '<p class="small muted">Для тренировки осталось непройденных: <b>' + remaining + '</b>. В следующей тренировке: ' + practiceCount + '. Уже отвеченные вопросы пропускаются.</p>' + (remaining ? '' : '<p><b>Все вопросы выбранного набора пройдены.</b> Выбери другую тему или сбрось прохождение.</p>') : '') +
+    '<button class="btn ghost" data-act="reset-practice">Сбросить прохождение</button>' +
   '</div>' +
 
   (st.session ? '<div class="actions"><button class="btn" data-act="resume">Продолжить незавершённую сессию</button><button class="btn ghost" data-act="discard">Начать заново</button></div>' : '') +
   '<div class="modes" style="margin-top:16px">' +
-    '<button class="mode primary" data-act="start" data-mode="practice"' + (pool.length ? '' : ' disabled') + '><b>Тренировка</b><small>Ответ и пояснение сразу после каждого вопроса</small></button>' +
+    '<button class="mode primary" data-act="start" data-mode="practice"' + (remaining ? '' : ' disabled') + '><b>Тренировка</b><small>Ответ и пояснение сразу после каждого вопроса</small></button>' +
     '<button class="mode" data-act="start" data-mode="exam"' + (pool.length ? '' : ' disabled') + '><b>Пробный экзамен</b><small>Ответы в конце, оценка по шкале силлабуса, таймер</small></button>' +
     '<button class="mode" data-act="start" data-mode="cards"' + (pool.length ? '' : ' disabled') + '><b>Карточки</b><small>Вопрос → вспомни ответ → переверни карточку</small></button>' +
     '<button class="mode" data-act="list"><b>Шпаргалка</b><small>Все вопросы с верными ответами и поиском</small></button>' +
@@ -597,7 +622,7 @@ function answer(i){
   var it = S.items[S.i];
   if (S.mode === 'practice') {
     if (it.chosen !== null) return;
-    it.chosen = i; record(it.q.id, i === it.ci); save();
+    it.chosen = i; st.practiceDone[it.q.id] = true; record(it.q.id, i === it.ci); save();
   } else { it.chosen = i; }
   render();
 }
@@ -622,7 +647,7 @@ document.addEventListener('click', function(e){
   else if (a === 'discard') { discardSession(); S = null; render(); }
   else if (a === 'theme') { st.theme = effectiveTheme() === 'dark' ? 'light' : 'dark'; applyTheme(); save(); }
   else if (a === 'cfg') { cfg[b.getAttribute('data-k')] = b.getAttribute('data-v'); if (b.getAttribute('data-k') === 'set') cfg.topic = 'all'; saveCfg(); render(); }
-  else if (a === 'start') { var m = b.getAttribute('data-mode'); start(m, pickIds(currentPool())); }
+  else if (a === 'start') { var m = b.getAttribute('data-mode'); start(m, sessionIds(m)); }
   else if (a === 'mistakes') { var ids = mistakeIds(); shuffle(ids); start('practice', ids, {title:'работа над ошибками'}); }
   else if (a === 'list') { view = 'list'; render(); window.scrollTo(0,0); }
   else if (a === 'answer') answer(+b.getAttribute('data-i'));
@@ -631,13 +656,14 @@ document.addEventListener('click', function(e){
   else if (a === 'goto') { S.i = +b.getAttribute('data-i'); render(); }
   else if (a === 'finish') finish();
   else if (a === 'redo-wrong') { var w = S.items.filter(function(x){ return x.chosen !== x.ci; }).map(function(x){ return x.q.id; }); shuffle(w); start('practice', w, {title:'ошибки'}); }
-  else if (a === 'again') start(S.mode, pickIds(currentPool()));
+  else if (a === 'again') { var ids = sessionIds(S.mode); if (ids.length) start(S.mode, ids); else { view = 'home'; render(); window.scrollTo(0,0); } }
+  else if (a === 'reset-practice') resetPractice();
   else if (a === 'flip') { S.items[S.i].flipped = true; render(); }
   else if (a === 'card-yes') cardMark(true);
   else if (a === 'card-no') cardMark(false);
   else if (a === 'cards-redo') { var n = S.items.filter(function(x){ return x.res === 0; }).map(function(x){ return x.q.id; }); shuffle(n); start('cards', n, {title:'повтор'}); }
   else if (a === 'practice-these') { var p = S.items.map(function(x){ return x.q.id; }); shuffle(p); start('practice', p); }
-  else if (a === 'reset') { if (confirm('Сбросить весь прогресс и историю экзаменов?')) { st.stats = {}; st.exams = []; discardSession(); S = null; save(); render(); } }
+  else if (a === 'reset') { if (confirm('Сбросить весь прогресс и историю экзаменов?')) { st.stats = {}; st.practiceDone = {}; st.exams = []; discardSession(); S = null; save(); render(); } }
 });
 
 document.addEventListener('keydown', function(e){
